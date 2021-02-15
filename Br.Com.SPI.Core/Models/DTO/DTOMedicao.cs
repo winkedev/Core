@@ -58,6 +58,9 @@ namespace Br.Com.SPI.Core.Models.DTO
         [XmlElement("DataMedicao"), JsonPropertyName("dataMedicao")]
         public DateTime DataMedicao { get; set; }
 
+        [XmlElement("DataMedicaoShort"), JsonPropertyName("dataMedicaoShort")]
+        public string DataMedicaoShort { get => DataMedicao.ToShortDateString(); set => this.DataMedicaoShort = value; }
+
         [XmlElement("CodigoOperacao"), JsonPropertyName("codigoOperacao")]
         public string CodigoOperacao { get; set; }
 

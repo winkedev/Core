@@ -394,7 +394,7 @@ END CATCH
 GO
 
 /*****************************************/
-/********** PlanoInsoecaoCab *************/
+/********** PlanoInspecaoCab *************/
 /*****************************************/
 
 IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoCab'))
@@ -407,7 +407,7 @@ GO
 CREATE PROCEDURE spGetPlanoInspecaoCab
 AS
 BEGIN TRY
-	SELECT * FROM PlanoInspecaoCab
+	SELECT codCC, descCC, codItem FROM PlanoInspecaoCab GROUP BY CodCC, descCC, codItem
 END TRY
 BEGIN CATCH
 	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
