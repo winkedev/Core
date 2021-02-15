@@ -2,7 +2,6 @@ import { BaseApi, MountError } from '../BaseApi';
 
 export const ApiConnection = {
     testConnection: async () => {
-        console.log(process.env.REACT_APP_WS);
 
         let resp;
         try {
@@ -15,14 +14,14 @@ export const ApiConnection = {
 
         return resp.data;
     },
-    getConnectionString: async () => {
+
+    getConnection: async () => {
         let resp;
         try {
-            console.log("try get connection string");
-            resp = await BaseApi.get("api/connection/getconnection");
-            console.log(`Response from get connection: ${resp}`);
-        } catch (e) {
-            resp = MountError(e);
+            resp = await BaseApi.get("api/connection/getconnection")
+        }
+        catch (e) {
+            resp = MountError(e)
         }
 
         return resp.data;

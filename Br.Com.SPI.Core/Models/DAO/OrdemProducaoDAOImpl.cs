@@ -5,14 +5,13 @@ using System.Data.Common;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
-    public sealed class OrdemProducaoDAOImpl : DAOImpl, IOrdemProducaoDAO
+    internal sealed class OrdemProducaoDAOImpl : DAOImpl, IOrdemProducaoDAO
     {
         public List<OrdemProducao> GetAll()
         {
             List<OrdemProducao> list = new List<OrdemProducao>();
-            var dt = this.GetDataTable("spGetOrdemProducao");
-            
-            foreach (DbDataReader row in dt)
+
+            foreach (DbDataReader row in this.GetDataTable("spGetOrdemProducao"))
             {
                 list.Add(this.ParseToDTO(row));
             }

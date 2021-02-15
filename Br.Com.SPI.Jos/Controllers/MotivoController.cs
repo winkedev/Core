@@ -11,9 +11,9 @@ namespace Br.Com.SPI.Jos.Controllers
         
         [HttpGet]
         [Route("getall")]
-        public IActionResult GetAll([FromServices] IMotivoN1DAO dao)
+        public IActionResult GetAll([FromServices] DAOFactory dao)
         {
-            List<MotivoN1> list = dao.GetAll();
+            List<MotivoN1> list = dao.InitMotivoN1DAO().GetAll();
             return this.WriteSucess(list, "dados retornados com sucesso.");
 
         }

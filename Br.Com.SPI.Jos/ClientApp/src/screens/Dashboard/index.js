@@ -7,13 +7,11 @@ import { ReactComponent as UserSVG } from '../../assets/user.svg';
 import { ReactComponent as LogoutSVG } from '../../assets/logout.svg';
 import { ReactComponent as PlugSVG } from '../../assets/plug.svg';
 
-import { ApiConnection } from '../../services/Jost/Api/Connection/Api';
-
 import Logo from '../../assets/jost-logo1.png';
 import SPILogo from '../../assets/spi_logo.png';
 import DashboardDefault from '../DashboardDefault';
 import ConsultaMedicao from '../ConsultaMedicao';
-import CadastroMotivo from '../CadastroMotivo';
+import Conexao from '../Conexao';
 
 const Dashboard = () => {
 
@@ -26,14 +24,11 @@ const Dashboard = () => {
                 return <DashboardDefault />
             case 1:
                 return <ConsultaMedicao />
+            case 2:
+                return <Conexao />
             default:
                 console.log(index);
         }
-    }
-
-    const testConnection = async () => {
-        let resp = await ApiConnection.testConnection();
-        console.log(resp);
     }
 
     return (
@@ -43,7 +38,7 @@ const Dashboard = () => {
                     <nav id="sidebar" className={isActive ? "active" : ""}>
                         <div className="sidebar-logo">
                             <img src={Logo} style={{ borderRadius: "5px" }} />
-                            <span>JOSH</span>
+                            <span>JOST</span>
                         </div>
                         <div className="sidebar-header">
                             <div className="sidebar-header-box1">
@@ -52,13 +47,12 @@ const Dashboard = () => {
                                 <a href="#homeSubmenu"
                                     data-toggle="collapse"
                                     aria-expanded="false" style={{ paddingLeft: "15px", display: "flex", justifyContent: "center", alignItems: "center" }} className="dropdown-toggle">
-
                                 </a>
                             </div>
                             <div className="collapse sidebar-header-box2" id="homeSubmenu">
                                 <ul className="list-unstyled">
                                     <li>
-                                        <a href="javascript:void(0);" onClick={() => testConnection()}>
+                                        <a href="javascript:void(0);">
                                             <i>
                                                 <i><LogoutSVG width={31} height={31} fill="#FFFFFF" opacity="0.5" /></i>
                                             </i>
@@ -115,18 +109,17 @@ const Dashboard = () => {
                                         <i>
                                             <FileSVG width={31} height={31} opacity="0.5" fill="#FFFFFF" />
                                         </i>
-                                        <span>Consulta Medicao</span>
+                                        <span>Consulta Medição</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" onClick={() => testConnection()}>
+                                    <a href="javascript:void(0)" onClick={() => setIndexActive(2)}>
                                         <i>
                                             <PlugSVG width={31} height={31} opacity="0.5" fill="#FFFFFF" />
                                         </i>
                                         <span>Testar Conexão</span>
                                     </a>
                                 </li>
-
                             </ul>
                         </div>
                     </nav>

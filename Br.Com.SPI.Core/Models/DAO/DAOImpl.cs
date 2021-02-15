@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
-    public abstract class DAOImpl
+    internal abstract class DAOImpl
     {
         private DbProviderFactory currentFactory;
 
@@ -35,26 +35,28 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             using (DbConnection con = this.OpenConnection())
             {
-                DbCommand command = this.currentFactory.CreateCommand();
-                command.CommandText = query;
-                command.Connection = con;
-
-                if (dic != null)
+                using (DbCommand command = this.currentFactory.CreateCommand())
                 {
-                    foreach (KeyValuePair<string, object> keypair in dic)
+                    command.CommandText = query;
+                    command.Connection = con;
+
+                    if (dic != null)
                     {
-                        DbParameter parameter = this.currentFactory.CreateParameter();
-                        parameter.ParameterName = keypair.Key;
-                        parameter.Value = keypair.Value;
-                        command.Parameters.Add(parameter);
+                        foreach (KeyValuePair<string, object> keypair in dic)
+                        {
+                            DbParameter parameter = this.currentFactory.CreateParameter();
+                            parameter.ParameterName = keypair.Key;
+                            parameter.Value = keypair.Value;
+                            command.Parameters.Add(parameter);
+                        }
                     }
-                }
 
-                using (DbDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
+                    using (DbDataReader reader = command.ExecuteReader())
                     {
-                        yield return reader;
+                        while (reader.Read())
+                        {
+                            yield return reader;
+                        }
                     }
                 }
             }
@@ -89,7 +91,7 @@ namespace Br.Com.SPI.Core.Models.DAO
                 return d;
             }
 
-            return obj != null ? obj : DBNull.Value;
+            return obj ?? DBNull.Value;
         }
     }
 }

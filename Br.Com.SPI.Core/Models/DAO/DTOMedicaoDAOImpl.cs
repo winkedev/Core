@@ -6,7 +6,7 @@ using System.Data.Common;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
-    public sealed class DTOMedicaoDAOImpl : DAOImpl, IDTOMedicao
+    internal sealed class DTOMedicaoDAOImpl : DAOImpl, IDTOMedicao
     {
         public List<DTOMedicao> GetAll()
         {

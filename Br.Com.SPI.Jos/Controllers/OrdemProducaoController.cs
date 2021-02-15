@@ -11,9 +11,9 @@ namespace Br.Com.SPI.Jos.Controllers
     {
         [HttpGet]
         [Route("getall")]
-        public IActionResult GetAll([FromServices] IOrdemProducaoDAO dao)
+        public IActionResult GetAll([FromServices] DAOFactory dao)
         {
-            List<OrdemProducao> list = dao.GetAll();
+            List<OrdemProducao> list = dao.InitOrdemProducaoDAO().GetAll();
 
             return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo("Erro ao recuperar ordem de producao");
         }

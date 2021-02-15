@@ -12,9 +12,9 @@ namespace Br.Com.SPI.Jos.Controllers
     {
         [HttpGet]
         [Route("getall")]
-        public IActionResult GetAll([FromServices] IPlanoInspecaoCabDAO dao)
+        public IActionResult GetAll([FromServices] DAOFactory dao)
         {
-            List<PlanoInspecaoCab> list = dao.GetAll();
+            List<PlanoInspecaoCab> list = dao.InitPlanoInspecaoCabDAO().GetAll();
 
             return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo("Erro ao recuperar Plano de inspecao");
         }

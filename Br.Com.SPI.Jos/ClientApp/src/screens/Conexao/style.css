@@ -1,0 +1,36 @@
+.conexao-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.conexao-panel{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 100%;
+}
+
+.conexao-card-header
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button-test{
+    width: 100%;
+    background: var(--primary-dark);
+    opacity: 0.5;
+    color: var(--primary-white);
+    transition: all 0.3s;
+}
+
+.button-test:hover{
+    color: var(--primary-white);
+    transform: scale(1.1);
+}

@@ -1,6 +1,6 @@
 ﻿namespace Br.Com.SPI.Core.Models.DAO
 {
-    public sealed class ConnectionDAOImpl : DAOImpl, IConnectionDAO
+    internal sealed class ConnectionDAOImpl : DAOImpl, IConnectionDAO
     {
         public SecurityConfig GetConnectionString()
         {

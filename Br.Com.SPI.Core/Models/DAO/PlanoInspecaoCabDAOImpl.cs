@@ -5,7 +5,7 @@ using System.Data.Common;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
-    public sealed class PlanoInspecaoCabDAOImpl : DAOImpl, IPlanoInspecaoCabDAO
+    internal sealed class PlanoInspecaoCabDAOImpl : DAOImpl, IPlanoInspecaoCabDAO
     {
         public List<PlanoInspecaoCab> GetAll()
         {

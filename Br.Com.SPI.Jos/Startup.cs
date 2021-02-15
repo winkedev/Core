@@ -27,11 +27,7 @@ namespace Br.Com.SPI.Jos
             services.AddSwaggerGen();
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
 
-            services.AddScoped<IMotivoN1DAO, MotivoN1DAOImpl>();
-            services.AddScoped<IDTOMedicao, DTOMedicaoDAOImpl>();
-            services.AddScoped<IPlanoInspecaoCabDAO, PlanoInspecaoCabDAOImpl>();
-            services.AddScoped<IOrdemProducaoDAO, OrdemProducaoDAOImpl>();
-            services.AddScoped<IConnectionDAO, ConnectionDAOImpl>();
+            services.AddScoped<DAOFactory>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -7,27 +7,63 @@ namespace Br.Com.SPI.Core.Extensions
     {
         public static Int64 ParseToInt64(this DbDataReader row, string name)
         {
-            return Int64.TryParse(row[name].ToString(), out Int64 result) ? result : throw new Exception($"Can't convert {name} into Int64");
+            try
+            {
+                return Int64.TryParse(row[name]?.ToString(), out Int64 result) ? result : default;
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         public static Int32 ParseToInt(this DbDataReader row, string name)
         {
-            return Int32.TryParse(row[name].ToString(), out Int32 result) ? result : throw new Exception($"Can't convert {name} into Int32");
+            try
+            {
+                return Int32.TryParse(row[name]?.ToString(), out Int32 result) ? result : default;
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         public static decimal ParseToDecimal(this DbDataReader row, string name)
         {
-            return decimal.TryParse(row[name].ToString(), out decimal result) ? result : throw new Exception($"Can't convert {name} into decimal");
+            try
+            {
+                return decimal.TryParse(row[name]?.ToString(), out decimal result) ? result : default;
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         public static DateTime ParseToDatetime(this DbDataReader row, string name)
         {
-            return DateTime.TryParse(row[name].ToString(), out DateTime result) ? result : throw new Exception($"Can't convert {name} into DateTime");
+            try
+            {
+                return DateTime.TryParse(row[name]?.ToString(), out DateTime result) ? result : default;
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         public static String ParseToString(this DbDataReader row, string name)
         {
-            return row[name].ToString();
+            try
+            {
+                return row[name]?.ToString() ?? default;
+            }
+            catch
+            {
+                return default;
+            }
+            
         }
     }
 }

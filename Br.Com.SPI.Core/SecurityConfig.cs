@@ -1,15 +1,30 @@
-﻿namespace Br.Com.SPI.Core
+﻿using System;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
+
+namespace Br.Com.SPI.Core
 {
+    [Serializable]
     public class SecurityConfig
     {
         private static SecurityConfig instance;
 
+        [XmlElement("Server"), JsonPropertyName("server")]
         public string SqlServer { get; private set; }
+
+        [XmlElement("UserID"), JsonPropertyName("userID")]
         public string SqlUID { get; private set; }
+        
+        [XmlIgnore, JsonIgnore]
         public string SqlPWD { get; private set; }
+
+        [XmlElement("Database"), JsonPropertyName("database")]
         public string SqlDatabase { get; private set; }
+
+        [XmlElement("Timeout"), JsonPropertyName("timeout")]
         public string SqlTimeout { get; private set; }
 
+        [XmlElement("Provider"), JsonPropertyName("provider")]
         public string SqlProvider { get; private set; }
 
         private SecurityConfig()
