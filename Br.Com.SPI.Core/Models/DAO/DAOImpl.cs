@@ -62,7 +62,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             }
         }
 
-        public void CheckPatternError(DataRowCollection rows)
+        public void CheckPatternError(DbDataReader rows)
         {
             
         }
