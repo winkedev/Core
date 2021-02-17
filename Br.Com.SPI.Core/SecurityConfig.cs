@@ -34,7 +34,7 @@ namespace Br.Com.SPI.Core
 
         public static SecurityConfig GetInstance()
         {
-            return instance = instance == null ? new SecurityConfig() : instance;
+            return instance = instance ?? new SecurityConfig();
         }
 
         public SecurityConfig AddSqlServer(string server)

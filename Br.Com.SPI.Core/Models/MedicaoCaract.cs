@@ -18,11 +18,7 @@ namespace Br.Com.SPI.Core.Models
 
         public DateTime DataRI { get; set; }
 
-        [XmlIgnore]
-        [JsonIgnore]
-        public PlanoInspecaoCaract PlanoInspecaoCaractParent { get; set; }
-
-        public MedicaoCab MedicaoCab { get; set; }
+        public Int64 IDTipoMedicao { get; set; }
 
         public TipoMedicao TipoMedicao { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
@@ -36,11 +37,7 @@ namespace Br.Com.SPI.Core.Models
 
         public DateTime DataRI { get; set; }
 
-        public MedicaoCaract MedicaoCaract { get; set; }
-
-        [XmlIgnore]
-        [JsonIgnore]
-        public PlanoInspecaoCab PlanoInspecaoCabParent { get; set; }
+        public List<MedicaoCaract> MedicaoCaract { get; set; }
 
     }
 }

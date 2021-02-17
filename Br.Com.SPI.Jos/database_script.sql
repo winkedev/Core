@@ -415,6 +415,42 @@ END CATCH
 
 GO
 
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoBy'))
+BEGIN
+	DROP PROCEDURE spGetPlanoInspecaoBy
+END
+
+GO
+
+CREATE PROCEDURE spGetPlanoInspecaoBy
+(
+@CODIGOCC VARCHAR(50),
+@DESCITEM VARCHAR(50),
+@CODIGOOP VARCHAR(50),
+@DATAINICIAL DATETIME,
+@DATAFINAL DATETIME
+)
+AS
+BEGIN TRY
+	SELECT PlanoIC.id, PlanoIC.codItem, PlanoIC.descItem, PlanoIC.verPlano, PlanoIC.codCC, PlanoIC.planoPadrao, PlanoIC.dataRI FROM PlanoInspecaoCab PlanoIC 
+	INNER JOIN PlanoInspecaoCaract PlanoICarac ON PlanoIC.Id = PlanoICarac.idPlanoInspecaoCab
+	LEFT JOIN MedicoesCab MedicoesC ON MedicoesC.IdPlanoInspecaoCab = PlanoIC.Id
+	LEFT JOIN OrdemProducao OP ON MedicoesC.idOrdemProducao = OP.id
+	WHERE 
+	PlanoIC.codCC = @CODIGOCC AND 
+	PlanoIC.descItem = ISNULL(@DESCITEM, PlanoIC.descItem) AND 
+	OP.codOP = ISNULL(@CODIGOOP, OP.codOP) AND
+	CONVERT(DATE, MedicoesC.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MedicoesC.dataInicio)) AND
+	CONVERT(DATE, MedicoesC.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MedicoesC.datafim))
+	GROUP BY PlanoIC.id, PlanoIC.codItem, PlanoIC.descItem, PlanoIC.verPlano, PlanoIC.codCC, PlanoIC.planoPadrao, PlanoIC.dataRI
+
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
 /*****************************************/
 /********** OrdemProducao *************/
 /*****************************************/

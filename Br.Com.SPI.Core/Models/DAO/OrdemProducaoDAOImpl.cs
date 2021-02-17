@@ -19,6 +19,23 @@ namespace Br.Com.SPI.Core.Models.DAO
             return list;
         }
 
+        public List<OrdemProducao> GetByID(long id)
+        {
+            Dictionary<string, object> dic = new Dictionary<string, object>()
+            {
+                { "ID", id }
+            };
+
+            List<OrdemProducao> list = new List<OrdemProducao>();
+
+            foreach (DbDataReader row in this.GetDataTable("spGetOrdemProducaoByID @ID", dic))
+            {
+                list.Add(this.ParseToDTO(row));
+            }
+
+            return list;
+        }
+
         public OrdemProducao Delete(OrdemProducao t)
         {
             throw new NotImplementedException();

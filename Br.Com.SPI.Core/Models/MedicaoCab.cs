@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Br.Com.SPI.Core.Models
 {
@@ -15,5 +16,9 @@ namespace Br.Com.SPI.Core.Models
         public DateTime DataFim { get; set; }
 
         public DateTime DataRI { get; set; }
+
+        public List<OrdemProducao> OrdemProducao { get; set; }
+
+        public List<MedicaoCaract> MedicaoCaract { get; set; }
     }
 }
