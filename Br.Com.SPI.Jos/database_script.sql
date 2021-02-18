@@ -553,7 +553,7 @@ GO
 CREATE PROCEDURE spGetPlanoInspecaoCab
 AS
 BEGIN TRY
-	SELECT codCC, descCC FROM PlanoInspecaoCab GROUP BY CodCC, descCC
+	SELECT * FROM PlanoInspecaoCab
 END TRY
 BEGIN CATCH
 	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
@@ -561,14 +561,32 @@ END CATCH
 
 GO
 
-IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoCabGroupByCodItem'))
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoCabCodigoCC'))
 BEGIN
-	DROP PROCEDURE spGetPlanoInspecaoCabGroupByCodItem
+	DROP PROCEDURE spGetPlanoInspecaoCabCodigoCC
 END
 
 GO
 
-CREATE PROCEDURE spGetPlanoInspecaoCabGroupByCodItem
+CREATE PROCEDURE spGetPlanoInspecaoCabCodigoCC
+AS
+BEGIN TRY
+	SELECT codCC, descCC FROM PlanoInspecaoCab GROUP BY codCC, descCC
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoCabCodigoItem'))
+BEGIN
+	DROP PROCEDURE spGetPlanoInspecaoCabCodigoItem
+END
+
+GO
+
+CREATE PROCEDURE spGetPlanoInspecaoCabCodigoItem
 AS
 BEGIN TRY
 	SELECT codItem FROM PlanoInspecaoCab GROUP BY codItem

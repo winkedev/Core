@@ -22,6 +22,37 @@ namespace Br.Com.SPI.Core.Models.DAO
 
             return list;
         }
+
+        public List<PlanoInspecaoCab> GetAllCodigoCC()
+        {
+            List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
+
+            var dt = this.GetDataTable("spGetPlanoInspecaoCabCodigoCC");
+
+            foreach (DbDataReader row in dt)
+            {
+                list.Add(this.ParseToDTO(row));
+            }
+
+
+            return list;
+        }
+
+        public List<PlanoInspecaoCab> GetAllCodigoItem()
+        {
+            List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
+
+            var dt = this.GetDataTable("spGetPlanoInspecaoCabCodigoItem");
+
+            foreach (DbDataReader row in dt)
+            {
+                list.Add(this.ParseToDTO(row));
+            }
+
+
+            return list;
+        }
+
         public List<DTOPlanoInspecao> GetPlanoInspecaoCabBy(string codigoCC, string descricaoItem, string codigoOP, DateTime dataInicial, DateTime dataFinal)
         {
             Dictionary<string, object> dic = new Dictionary<string, object>()
@@ -38,20 +69,6 @@ namespace Br.Com.SPI.Core.Models.DAO
             foreach(DbDataReader row in this.GetDataTable("spGetPlanoInspecaoCabBy @CODIGOCC, @DESCRICAOITEM, @CODIGOOP, @DATAINICIAL, @DATAFINAL", dic))
             {
                 list.Add(this.ParseToSimpleDTO(row));
-            }
-
-            return list;
-        }
-
-        public List<PlanoInspecaoCab> GetAllCodigoItem()
-        {
-            List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
-
-            var dt = this.GetDataTable("spGetPlanoInspecaoCabGroupByCodItem");
-
-            foreach (DbDataReader row in dt)
-            {
-                list.Add(this.ParseToDTO(row));
             }
 
             return list;
@@ -112,7 +129,5 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             throw new NotImplementedException();
         }
-
-        
     }
 }

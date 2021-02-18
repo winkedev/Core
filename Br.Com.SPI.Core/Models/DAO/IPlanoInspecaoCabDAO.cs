@@ -8,6 +8,8 @@ namespace Br.Com.SPI.Core.Models.DAO
     {
         List<PlanoInspecaoCab> GetAll();
 
+        List<PlanoInspecaoCab> GetAllCodigoCC();
+
         List<PlanoInspecaoCab> GetAllCodigoItem();
 
         List<DTOPlanoInspecao> GetPlanoInspecaoCabBy(string codigoCC, string descricaoItem, string codigoOP, DateTime dataInicial, DateTime dataFinal);

@@ -24,6 +24,15 @@ namespace Br.Com.SPI.Jos.Controllers
         }
 
         [HttpGet]
+        [Route("getallcodcc")]
+        public IActionResult GetAllCodCC([FromServices] DAOFactory dao)
+        {
+            List<PlanoInspecaoCab> list = dao.InitPlanoInspecaoCabDAO().GetAllCodigoCC();
+
+            return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo(DEFAULT_ERROR_MESSAGE);
+        }
+
+        [HttpGet]
         [Route("getallcoditem")]
         public IActionResult GetAllCodItem([FromServices] DAOFactory dao)
         {
