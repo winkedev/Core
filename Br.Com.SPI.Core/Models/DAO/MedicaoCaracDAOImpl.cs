@@ -42,6 +42,22 @@ namespace Br.Com.SPI.Core.Models.DAO
             return list;
         }
 
+        public bool UpdateValorMedido(long idMedicaoCab, string valorMedido)
+        {
+            Dictionary<string, object> dic = new Dictionary<string, object>
+            {
+                { "ID", idMedicaoCab },
+                { "VALORMEDIDO", valorMedido },
+            };
+
+            foreach (DbDataReader row in this.GetDataTable("spAtualizaValorMedido @ID, @VALORMEDIDO", dic))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public MedicaoCaract Delete(MedicaoCaract t)
         {
             throw new NotImplementedException();

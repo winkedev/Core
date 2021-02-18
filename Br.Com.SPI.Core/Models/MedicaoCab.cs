@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace Br.Com.SPI.Core.Models
 {
@@ -16,6 +18,9 @@ namespace Br.Com.SPI.Core.Models
         public DateTime DataFim { get; set; }
 
         public DateTime DataRI { get; set; }
+
+        [XmlElement("DataMedicaoShort"), JsonPropertyName("dataMedicaoShort")]
+        public string DataMedicaoShort { get => DataRI.ToShortDateString(); set => this.DataMedicaoShort = value; }
 
         public List<OrdemProducao> OrdemProducao { get; set; }
 

@@ -28,5 +28,19 @@ namespace Br.Com.SPI.Jos.Controllers
 
             return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo("Erro ao recuperar medicoes");
         }
+
+        [HttpPost]
+        [Route("updateall")]
+        public IActionResult SaveAll([FromServices] DAOFactory dao, [FromBody] List<DTOMedicao> list)
+        {
+            if(list == null || !list.Any())
+            {
+                return this.WriteErrorInfo("Lista não pode ser vazia.");
+            }
+
+            bool result = dao.InitDTOMedicaoDAO().UpdateAll(list);
+
+            return result ? this.WriteSucessInfo("Lista atualizada com sucesso.") : this.WriteErrorInfo("Erro ao atualizar lista.");
+        }
     }
 }

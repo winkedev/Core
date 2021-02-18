@@ -3,6 +3,7 @@ using Br.Com.SPI.Core.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
@@ -52,6 +53,7 @@ namespace Br.Com.SPI.Core.Models.DAO
         public DTOMedicao ParseToDTO(DbDataReader row)
         {
             DTOMedicao dto = new DTOMedicao();
+            dto.Row = row.ParseToInt64("row");
             dto.CodigoItem = row.ParseToString("codItem");
             dto.Descricaoitem = row.ParseToString("descItem");
             dto.VerPlano = row.ParseToString("verPlano");
@@ -71,6 +73,14 @@ namespace Br.Com.SPI.Core.Models.DAO
             dto.DataMedicao = row.ParseToDatetime("dataMedicao");
             dto.CodigoOperacao = row.ParseToString("codOP");
             dto.Limite = row.ParseToString("limite");
+            dto.IDMedicaoCab = row.ParseToInt64("IDMedicaoCab");
+            dto.IDMedicaoCarac = row.ParseToInt64("IDMedicaoCarac");
+            dto.IDMotivoN1 = row.ParseToInt64("IDMotivoN1");
+            dto.IDMotivoN2 = row.ParseToInt64("IDMotivoN2");
+            dto.IDOrdemProducao = row.ParseToInt64("IDOrdemProducao");
+            dto.IDPlanoInspecaoCAB = row.ParseToInt64("IDPlanoInspecaoCAB");
+            dto.IDPlanoInspecaoCarac = row.ParseToInt64("IDPlanoInspecaoCarac");
+            dto.IDTipoMedicao = row.ParseToInt64("IDTipoMedicao");
             return dto;
         }
 
@@ -82,6 +92,14 @@ namespace Br.Com.SPI.Core.Models.DAO
         public DTOMedicao SaveUpdate(DTOMedicao t)
         {
             throw new NotImplementedException();
+        }
+
+        public bool UpdateAll(List<DTOMedicao> list)
+        {
+            Parallel.ForEach(list, (dto) => new DAOFactory().InitMedicaoCaracDAO()
+            .UpdateValorMedido(dto.IDMedicaoCarac, dto.ValorMedido));
+
+            return true;
         }
     }
 }

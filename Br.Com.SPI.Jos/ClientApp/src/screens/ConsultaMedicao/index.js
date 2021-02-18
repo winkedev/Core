@@ -33,7 +33,7 @@ const ConsultaMedicao = () => {
     const [currentCodigoOp, setCurrentCodigoOp] = useState(null);
     const [currentInitialDate, setCurrentInitialDate] = useState(new Date());
     const [currentFinalDate, setCurrentFinalDate] = useState(new Date());
-    const [currentMedicao, setCurrentMedicao] = useState([]);
+    const [currentMedicao, setCurrentMedicao] = useState({});
 
     useEffect(async () => {
 
@@ -94,8 +94,9 @@ const ConsultaMedicao = () => {
             dataFim: currentFinalDate != null ? currentFinalDate.toISOString() : null
         };
 
-        let resp = await ApiConsultaMedicao.getBy(dto);
+        let resp = await ApiPlanoInspecao.getBy(dto);
 
+        console.log(resp);
         setMedicaoData(resp != null && resp.data != null ? resp.data : []);
     }
 
@@ -110,10 +111,8 @@ const ConsultaMedicao = () => {
     }
 
     const mountMedicaoDetalhada = (row) => {
-        let dic = [];
-        dic.push(row)
         setIsMedicaoDetalhada(true);
-        setCurrentMedicao(dic);
+        setCurrentMedicao(row);
     }
 
     const unmountMedicaoDetalhada = () => {
@@ -131,30 +130,35 @@ const ConsultaMedicao = () => {
 
     const column = [
         {
-            ID: "codigoCC",
             dataField: "codigoCCAndDescricaoCC",
-            text: "Máquina"
+            text: "Máquina",
+            editable: false
         },
         {
             dataField: "codigoItem",
-            text: "Item"
+            text: "Item",
+            editable: false
         },
         {
             dataField: "descricaoItem",
-            text: "Descrição"
+            text: "Descrição",
+            editable: false
         },
         {
             dataField: "verPlano",
-            text: "Versão Plano"
+            text: "Versão Plano",
+            editable: false
         },
         {
             dataField: "dataMedicaoShort",
-            text: "Data medição"
+            text: "Data medição",
+            editable: false
         },
         {
             dataField: "IDConsultaDet",
             text: "Consulta Medições",
-            formatter: actionformatter
+            formatter: actionformatter,
+            editable: false
         },
     ]
 
@@ -168,7 +172,6 @@ const ConsultaMedicao = () => {
                     <div className="cm-title">
                         <h4>Consulta Medição</h4>
                     </div>
-
 
 
                     {isMedicaoDetalhada ? <ConsultaMedicaoDetalhada customdata={currentMedicao} onBackButtonClick={() => unmountMedicaoDetalhada()} /> :
@@ -202,7 +205,7 @@ const ConsultaMedicao = () => {
                                 </div>
                             </div>
 
-                            <div className="cm-body">
+                            <div className="cm-body" style={{ height: "100%" }}>
                                 <CustomTable customcolumns={column} customdata={medicaoData} />
                             </div>
                         </div>

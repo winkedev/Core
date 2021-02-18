@@ -1,4 +1,5 @@
 ﻿using Br.Com.SPI.Core.Extensions;
+using Br.Com.SPI.Core.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -21,7 +22,7 @@ namespace Br.Com.SPI.Core.Models.DAO
 
             return list;
         }
-        public List<PlanoInspecaoCab> GetPlanoInspecaoCabBy(string codigoCC, string descricaoItem, string codigoOP, DateTime dataInicial, DateTime dataFinal)
+        public List<DTOPlanoInspecao> GetPlanoInspecaoCabBy(string codigoCC, string descricaoItem, string codigoOP, DateTime dataInicial, DateTime dataFinal)
         {
             Dictionary<string, object> dic = new Dictionary<string, object>()
             {
@@ -32,9 +33,23 @@ namespace Br.Com.SPI.Core.Models.DAO
                 { "DATAFINAL", this.GetValueOrDbNull(dataFinal) }
             };
 
+            List<DTOPlanoInspecao> list = new List<DTOPlanoInspecao>();
+
+            foreach(DbDataReader row in this.GetDataTable("spGetPlanoInspecaoCabBy @CODIGOCC, @DESCRICAOITEM, @CODIGOOP, @DATAINICIAL, @DATAFINAL", dic))
+            {
+                list.Add(this.ParseToSimpleDTO(row));
+            }
+
+            return list;
+        }
+
+        public List<PlanoInspecaoCab> GetAllCodigoItem()
+        {
             List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
 
-            foreach(DbDataReader row in this.GetDataTable("spGetPlanoInspecaoBy @CODIGOCC, @DESCRICAOITEM, @CODIGOOP, @DATAINICIAL, @DATAFINAL", dic))
+            var dt = this.GetDataTable("spGetPlanoInspecaoCabGroupByCodItem");
+
+            foreach (DbDataReader row in dt)
             {
                 list.Add(this.ParseToDTO(row));
             }
@@ -73,6 +88,21 @@ namespace Br.Com.SPI.Core.Models.DAO
             return p;
         }
 
+        public DTOPlanoInspecao ParseToSimpleDTO(DbDataReader row)
+        {
+            DTOPlanoInspecao p = new DTOPlanoInspecao();
+            p.ID = row.ParseToInt64("Id");
+            p.CodigoItem = row.ParseToString("codItem");
+            p.DescricaoItem = row.ParseToString("descItem");
+            p.VerPlano = row.ParseToString("verPlano");
+            p.CodigoCC = row.ParseToString("codCC");
+            p.DescricaoCC = row.ParseToString("descCC");
+            p.DataRI = row.ParseToDatetime("dataRI");
+            p.CodigoOP = row.ParseToString("codOP");
+
+            return p;
+        }
+
         public Dictionary<string, object> ParseToParameters(PlanoInspecaoCab t)
         {
             throw new NotImplementedException();
@@ -82,5 +112,7 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }

@@ -2,6 +2,10 @@ USE SPI_JOST_RI_ELETRONICO
 
 GO
 
+/*****************************************/
+/********** MedicoesCab ******************/
+/*****************************************/
+
 IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetMedicoesCab'))
 BEGIN
 	DROP PROCEDURE spGetMedicoesCab
@@ -77,6 +81,124 @@ BEGIN TRY
 	END
 
 	SELECT @@ROWCOUNT AS Retorno
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetMedicaoCabByPlanoInspecaoCab'))
+BEGIN
+	DROP PROCEDURE spGetMedicaoCabByPlanoInspecaoCab
+END
+
+GO
+
+CREATE PROCEDURE spGetMedicaoCabByPlanoInspecaoCab
+(
+@IDPLANOCAB BIGINT
+)
+AS
+BEGIN TRY
+	SELECT * FROM MedicoesCab WHERE IdPlanoInspecaoCab = @IDPLANOCAB
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
+/*****************************************/
+/********** MedicoesCaract ***************/
+/*****************************************/
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetMedicaoCaracByPlanoInspecaoCarac'))
+BEGIN
+	DROP PROCEDURE spGetMedicaoCaracByPlanoInspecaoCarac
+END
+
+GO
+
+CREATE PROCEDURE spGetMedicaoCaracByPlanoInspecaoCarac
+(
+@IDPLANOCARAC BIGINT
+)
+AS
+BEGIN TRY
+	SELECT * FROM MedicoesCaract WHERE idPlanoInspecaoCaract = @IDPLANOCARAC
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetMedicaoCaracByMedicaoCab'))
+BEGIN
+	DROP PROCEDURE spGetMedicaoCaracByMedicaoCab
+END
+
+GO
+
+CREATE PROCEDURE spGetMedicaoCaracByMedicaoCab
+(
+@IDMEDICAOCAB BIGINT
+)
+AS
+BEGIN TRY
+	SELECT * FROM MedicoesCaract WHERE idMedicoesCab = @IDMEDICAOCAB
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spAtualizaValorMedido'))
+BEGIN
+	DROP PROCEDURE spAtualizaValorMedido
+END
+
+GO
+
+CREATE PROCEDURE spAtualizaValorMedido
+(
+@IDMedicaoCarac BIGINT,
+@ValorMedido VARCHAR(50)
+)
+AS
+BEGIN TRY
+	UPDATE MedicoesCaract SET
+	valorMedido = @ValorMedido
+	WHERE Id = @IDMedicaoCarac
+
+	SELECT @@ROWCOUNT AS Retorno
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
+/*****************************************/
+/********** Tipomedicao ******************/
+/*****************************************/
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetTipoMedicaoByID'))
+BEGIN
+	DROP PROCEDURE spGetTipoMedicaoByID
+END
+
+GO
+
+CREATE PROCEDURE spGetTipoMedicaoByID
+(
+@ID BIGINT
+)
+AS
+BEGIN TRY
+	SELECT * FROM TipoMedicoes WHERE Id = @ID
 END TRY
 BEGIN CATCH
 	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
@@ -318,7 +440,7 @@ END CATCH
 GO
 
 /*****************************************/
-/*********** View ConsultaMedica *********/
+/*********** View ConsultaMedicao *********/
 /*****************************************/
 
 IF EXISTS(SELECT * FROM sys.views WHERE OBJECT_ID = object_id('medicoes'))
@@ -343,6 +465,7 @@ FROM     dbo.OrdemProducao RIGHT OUTER JOIN
                   dbo.MotivosN2 AS MN2 ON MN1.id = MN2.idMotivoN1 ON MJ.idMotivoN2 = MN2.id ON MCaract.Id = MJ.idMedicoesCaract LEFT OUTER JOIN
                   dbo.TipoMedicoes AS TM ON MCaract.idTipoMedicao = TM.Id
 ORDER BY PICaract.posicao
+
 GO
 
 IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spConsultaMedicaoBy'))
@@ -362,16 +485,39 @@ CREATE PROCEDURE spConsultaMedicaoBy
 )
 AS
 BEGIN TRY
-	SELECT * FROM medicoes WHERE 
-	codCC = @CODIGOCC AND 
-	codOP = ISNULL(@CODIGOOP, codOP) AND
-	descItem = ISNULL(@DESCITEM, descItem) AND 
-	CONVERT(DATE, dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, dataInicio)) AND
-	CONVERT(DATE, datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, datafim))
+	SELECT ROW_NUMBER() OVER (ORDER BY PICaract.posicao) AS Row,
+	PICab.Id AS IDPlanoInspecaoCAB, PICaract.ID AS IDPlanoInspecaoCarac, MCab.Id AS IDMedicaoCab, MCaract.id AS IDMedicaoCarac, TM.Id AS IDTipoMedicao, MN1.id AS IDMotivoN1, MN2.id AS IDMotivoN2, OrdemProducao.id AS IDOrdemProducao,
+	PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.descCC, MCab.dataInicio, MCab.datafim, PICaract.posicao, PICaract.tipo, PICaract.caracteristica, PICaract.class, MCaract.numMedicao, 
+	MCaract.valorMedido, TM.descTipo, MN1.descMotivoN1 + '/' + MN2.descMotivoN2 AS justificativa, MJ.obs, MCaract.dataMedicao, dbo.OrdemProducao.codOP, CAST(PICaract.limInf AS VARCHAR(10)) 
+	+ '  - ' + CAST(PICaract.limSup AS VARCHAR(10)) AS limite
+	FROM     
+	dbo.OrdemProducao RIGHT OUTER JOIN
+	dbo.MedicoesCab AS MCab INNER JOIN
+	dbo.PlanoInspecaoCaract AS PICaract ON MCab.IdPlanoInspecaoCab = PICaract.idPlanoInspecaoCab INNER JOIN
+	dbo.MedicoesCaract AS MCaract ON PICaract.Id = MCaract.idPlanoInspecaoCaract AND MCab.Id = MCaract.idMedicoesCab INNER JOIN
+	dbo.PlanoInspecaoCab AS PICab ON MCab.IdPlanoInspecaoCab = PICab.Id ON dbo.OrdemProducao.id = MCab.idOrdemProducao LEFT OUTER JOIN
+	dbo.MedicoesJustificativa AS MJ INNER JOIN
+	dbo.MotivosN1 AS MN1 INNER JOIN
+	dbo.MotivosN2 AS MN2 ON MN1.id = MN2.idMotivoN1 ON MJ.idMotivoN2 = MN2.id ON MCaract.Id = MJ.idMedicoesCaract LEFT OUTER JOIN
+	dbo.TipoMedicoes AS TM ON MCaract.idTipoMedicao = TM.Id
+	WHERE 
+	PICab.codCC = @CODIGOCC AND 
+	PICab.descItem = ISNULL(@DESCITEM, PICab.descItem) AND 
+	dbo.OrdemProducao.codOP = ISNULL(@CODIGOOP, dbo.OrdemProducao.codOP) AND
+	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
+	CONVERT(DATE, MCab.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MCab.datafim))
+
 END TRY
 BEGIN CATCH
 	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
 END CATCH
+
+GO
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spConsultaMedicaoByGrouped'))
+BEGIN
+	DROP PROCEDURE spConsultaMedicaoByGrouped
+END
 
 GO
 
@@ -407,7 +553,7 @@ GO
 CREATE PROCEDURE spGetPlanoInspecaoCab
 AS
 BEGIN TRY
-	SELECT codCC, descCC, codItem FROM PlanoInspecaoCab GROUP BY CodCC, descCC, codItem
+	SELECT codCC, descCC FROM PlanoInspecaoCab GROUP BY CodCC, descCC
 END TRY
 BEGIN CATCH
 	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
@@ -415,14 +561,32 @@ END CATCH
 
 GO
 
-IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoBy'))
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoCabGroupByCodItem'))
 BEGIN
-	DROP PROCEDURE spGetPlanoInspecaoBy
+	DROP PROCEDURE spGetPlanoInspecaoCabGroupByCodItem
 END
 
 GO
 
-CREATE PROCEDURE spGetPlanoInspecaoBy
+CREATE PROCEDURE spGetPlanoInspecaoCabGroupByCodItem
+AS
+BEGIN TRY
+	SELECT codItem FROM PlanoInspecaoCab GROUP BY codItem
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoCabBy'))
+BEGIN
+	DROP PROCEDURE spGetPlanoInspecaoCabBy
+END
+
+GO
+
+CREATE PROCEDURE spGetPlanoInspecaoCabBy
 (
 @CODIGOCC VARCHAR(50),
 @DESCITEM VARCHAR(50),
@@ -432,17 +596,17 @@ CREATE PROCEDURE spGetPlanoInspecaoBy
 )
 AS
 BEGIN TRY
-	SELECT PlanoIC.id, PlanoIC.codItem, PlanoIC.descItem, PlanoIC.verPlano, PlanoIC.codCC, PlanoIC.planoPadrao, PlanoIC.dataRI FROM PlanoInspecaoCab PlanoIC 
-	INNER JOIN PlanoInspecaoCaract PlanoICarac ON PlanoIC.Id = PlanoICarac.idPlanoInspecaoCab
-	LEFT JOIN MedicoesCab MedicoesC ON MedicoesC.IdPlanoInspecaoCab = PlanoIC.Id
-	LEFT JOIN OrdemProducao OP ON MedicoesC.idOrdemProducao = OP.id
+	SELECT PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, PICab.dataRI, OrdemProd.codOP
+	FROM PlanoInspecaoCab PICab 
+	LEFT JOIN MedicoesCab MCab ON PICab.Id = MCab.IdPlanoInspecaoCab
+	LEFT JOIN OrdemProducao OrdemProd ON MCab.idOrdemProducao = OrdemProd.id
 	WHERE 
-	PlanoIC.codCC = @CODIGOCC AND 
-	PlanoIC.descItem = ISNULL(@DESCITEM, PlanoIC.descItem) AND 
-	OP.codOP = ISNULL(@CODIGOOP, OP.codOP) AND
-	CONVERT(DATE, MedicoesC.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MedicoesC.dataInicio)) AND
-	CONVERT(DATE, MedicoesC.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MedicoesC.datafim))
-	GROUP BY PlanoIC.id, PlanoIC.codItem, PlanoIC.descItem, PlanoIC.verPlano, PlanoIC.codCC, PlanoIC.planoPadrao, PlanoIC.dataRI
+	PICab.codCC = @CODIGOCC AND 
+	PICab.descItem = ISNULL(@DESCITEM, PICab.descItem) AND 
+	OrdemProd.codOP = ISNULL(@CODIGOOP, OrdemProd.codOP) AND
+	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
+	CONVERT(DATE, MCab.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MCab.datafim))
+	GROUP BY PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, PICab.dataRI, OrdemProd.codOP
 
 END TRY
 BEGIN CATCH
@@ -450,6 +614,33 @@ BEGIN CATCH
 END CATCH
 
 GO
+
+
+/*****************************************/
+/********** PlanoInspecaoCaract **********/
+/*****************************************/
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaocaracByPlanoInspecaoCab'))
+BEGIN
+	DROP PROCEDURE spGetPlanoInspecaocaracByPlanoInspecaoCab
+END
+
+GO
+
+CREATE PROCEDURE spGetPlanoInspecaocaracByPlanoInspecaoCab
+(
+@IDPLANOCAB BIGINT
+)
+AS
+BEGIN TRY
+	SELECT * FROM PlanoInspecaoCaract WHERE idPlanoInspecaoCab = @IDPLANOCAB
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
 
 /*****************************************/
 /********** OrdemProducao *************/
@@ -466,6 +657,27 @@ CREATE PROCEDURE spGetOrdemProducao
 AS
 BEGIN TRY
 	SELECT * FROM OrdemProducao
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetOrdemProducaoByID'))
+BEGIN
+	DROP PROCEDURE spGetOrdemProducaoByID
+END
+
+GO
+
+CREATE PROCEDURE spGetOrdemProducaoByID
+(
+@ID BIGINT
+)
+AS
+BEGIN TRY
+	SELECT * FROM OrdemProducao WHERE id = @ID
 END TRY
 BEGIN CATCH
 	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem

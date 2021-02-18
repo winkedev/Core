@@ -9245,6 +9245,11 @@
     "react-transition-group" "^4.2.0"
     "underscore" "1.9.1"
 
+"react-bootstrap-table2-editor@^1.4.0":
+  "integrity" "sha512-18yDCwsVt3b5Fwy0jidNDAbUA6vC7k9JjQVmykazWSw8G115+mmZnhe9/7RO7jAu8X7lhmobwlNwECzwPu1nDg=="
+  "resolved" "https://registry.npmjs.org/react-bootstrap-table2-editor/-/react-bootstrap-table2-editor-1.4.0.tgz"
+  "version" "1.4.0"
+
 "react-bootstrap-table2-paginator@^2.1.2":
   "integrity" "sha512-LC5znEphhgKJvaSY1q8d+Gj0Nc/1X+VS3tKJjkmWmfv9P61YC/BnwJ+aoqEmQzsLiVGowrzss+i/u+Tip5H+Iw=="
   "resolved" "https://registry.npmjs.org/react-bootstrap-table2-paginator/-/react-bootstrap-table2-paginator-2.1.2.tgz"

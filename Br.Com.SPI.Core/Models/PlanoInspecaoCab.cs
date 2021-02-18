@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace Br.Com.SPI.Core.Models
 {
@@ -20,6 +22,13 @@ namespace Br.Com.SPI.Core.Models
         public string PlanoPadrao { get; set; }
 
         public DateTime DataRI { get; set; }
+
+        [XmlElement("DataMedicaoShort"), JsonPropertyName("dataMedicaoShort")]
+        public string DataMedicaoShort { get => DataRI.ToShortDateString(); set => this.DataMedicaoShort = value; }
+
+
+        [XmlElement("CodigoCCAndDescricaoCC"), JsonPropertyName("codigoCCAndDescricaoCC")]
+        public string CodigoCCAndDescricaoCC { get => string.Concat(CodigoCC, " ", DescricaoCC); set => this.CodigoCCAndDescricaoCC = value; }
 
         public List<PlanoInspecaoCaract> PlanoInspecaoCaract { get; set; }
 

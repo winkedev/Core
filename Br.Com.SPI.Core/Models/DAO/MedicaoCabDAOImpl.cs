@@ -37,6 +37,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             m.DataInicio = row.ParseToDatetime("dataInicio");
             m.DataFim = row.ParseToDatetime("dataFim");
             m.DataRI = row.ParseToDatetime("dataRI");
+            m.IDOrdemProducao = row.ParseToInt64("idOrdemProducao");
 
             try
             {

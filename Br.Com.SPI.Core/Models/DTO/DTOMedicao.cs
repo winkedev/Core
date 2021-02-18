@@ -7,6 +7,34 @@ namespace Br.Com.SPI.Core.Models.DTO
 {
     public class DTOMedicao : Abstract
     {
+        [XmlElement("Row"), JsonPropertyName("row")]
+        public Int64 Row { get; set; }
+
+        [XmlElement("IDPlanoInspecaoCAB"), JsonPropertyName("idPlanoInspecaoCAB")]
+        public Int64 IDPlanoInspecaoCAB { get; set; }
+
+        [XmlElement("IDPlanoInspecaoCarac"), JsonPropertyName("idPlanoInspecaoCarac")]
+        public Int64 IDPlanoInspecaoCarac { get; set; }
+
+        [XmlElement("IDMedicaoCab"), JsonPropertyName("idMedicaoCab")]
+        public Int64 IDMedicaoCab { get; set; }
+
+        [XmlElement("IDMedicaoCarac"), JsonPropertyName("idMedicaoCarac")]
+        public Int64 IDMedicaoCarac { get; set; }
+
+        [XmlElement("IDTipoMedicao"), JsonPropertyName("idTipoMedicao")]
+        public Int64 IDTipoMedicao { get; set; }
+
+        [XmlElement("IDMotivoN1"), JsonPropertyName("idMotivoN1")]
+        public Int64 IDMotivoN1 { get; set; }
+
+        [XmlElement("IDMotivoN2"), JsonPropertyName("idMotivoN2")]
+        public Int64 IDMotivoN2 { get; set; }
+
+        [XmlElement("IDOrdemProducao"), JsonPropertyName("idOrdemProducao")]
+        public Int64 IDOrdemProducao { get; set; }
+
+        [XmlElement("CodigoItem"), JsonPropertyName("codigoItem")]
         public string CodigoItem { get; set; }
 
         [XmlElement("DescricaoItem"), JsonPropertyName("descricaoItem")]

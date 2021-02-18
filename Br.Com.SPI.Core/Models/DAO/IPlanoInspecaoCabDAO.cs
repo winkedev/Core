@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Br.Com.SPI.Core.Models.DTO;
+using System;
 using System.Collections.Generic;
 
 namespace Br.Com.SPI.Core.Models.DAO
@@ -7,6 +8,8 @@ namespace Br.Com.SPI.Core.Models.DAO
     {
         List<PlanoInspecaoCab> GetAll();
 
-        List<PlanoInspecaoCab> GetPlanoInspecaoCabBy(string codigoCC, string descricaoItem, string codigoOP, DateTime dataInicial, DateTime dataFinal);
+        List<PlanoInspecaoCab> GetAllCodigoItem();
+
+        List<DTOPlanoInspecao> GetPlanoInspecaoCabBy(string codigoCC, string descricaoItem, string codigoOP, DateTime dataInicial, DateTime dataFinal);
     }
 }
