@@ -1,20 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './style.css';
 
 import CustomTable from '../../components/CustomTable';
 import ReactLoading from 'react-loading';
+import CustomPopup from '../../components/CustomPopup';
 
 import { ApiConsultaMedicao } from '../../services/Jost/Api/ConsultaMedicao/Api';
+import { SecurityConfig } from '../../services/SecurityConfig';
 
 const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
+
+    const CONSULTAMEDICAODET_PREFIX = "*ConsultaMedicaoDetalhada*";
+
+    const refmodal = useRef(null);
+
+    const [isErrorPopup, setIsErrorPopup] = useState(false);
+    const [isOkPopup, setIsOkPopup] = useState(false);
+    const [popupTitle, setPopupTitle] = useState();
+    const [popupContent, setPopupContent] = useState();
 
     const [dic, setDic] = useState([]);
 
     const [isLoading, setIsloading] = useState(false);
 
     useEffect(async () => {
-
-        console.log("actived");
 
         let dto = {
             codigoCC: customdata.codigoCC,
@@ -24,27 +33,48 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             dataFim: customdata.dataRI
         };
         let resp = await ApiConsultaMedicao.getBy(dto);
+        SecurityConfig.writeLogs(CONSULTAMEDICAODET_PREFIX, `Response from ApiConsultaMedicao.getBy(): ${resp?.sucess ? 'Ok' : "Error"}`);
 
         setDic(resp.data);
 
     }, [])
 
+    const openModal = (title, content, isOk, isError) => {
+        setPopupTitle(title);
+        setPopupContent(content);
+        setIsOkPopup(isOk);
+        setIsErrorPopup(isError);
+        refmodal.current.click();
+    }
+
     const saveAll = async () => {
 
-        setIsloading(true);
-        await new Promise(r => setTimeout(r, 1000));
-        var compactedDic = [];
+        try {
+            setIsloading(true);
+            await new Promise(r => setTimeout(r, 500));
+            var compactedDic = [];
 
-        Object.keys(dic).map((k, v) => {
-            compactedDic.push({
-                idMedicaoCarac: dic[v].idMedicaoCarac,
-                valorMedido: dic[v].valorMedido
+            Object.keys(dic).map((k, v) => {
+                compactedDic.push({
+                    idMedicaoCarac: dic[v].idMedicaoCarac,
+                    valorMedido: dic[v].valorMedido
+                })
             })
-        })
 
-        let resp = await ApiConsultaMedicao.updateAll(compactedDic);
+            let resp = await ApiConsultaMedicao.updateAll(compactedDic);
+            SecurityConfig.writeLogs(CONSULTAMEDICAODET_PREFIX, `Response from ApiConsultaMedicao.updateAll(): ${resp?.sucess ? 'Ok' : "Error"}`);
 
-        setIsloading(false);
+            if (resp?.sucess) {
+                openModal("Sucesso", "informações atualizadas com sucesso.", true, false);
+            }
+
+        }
+        catch (e) {
+
+        }
+        finally {
+            setIsloading(false);
+        }
     }
 
     const columns = [
@@ -56,7 +86,7 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
         },
         {
             dataField: "posicao",
-            text: "Posição",
+            text: "Pos",
             editable: false,
 
         },
@@ -82,17 +112,17 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
         },
         {
             dataField: "numeroMedicao",
-            text: "N°Medição",
+            text: "N°Med",
             editable: false
         },
         {
             dataField: "valorMedido",
-            text: "ValorMedido",
+            text: "Valor",
             editable: true
         },
         {
             dataField: "descricaoTipo",
-            text: "Desc.Tipo",
+            text: "TipoMed",
             editable: false
         },
         {
@@ -106,8 +136,8 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             editable: false
         },
         {
-            dataField: "codigoOperacao",
-            text: "CódigoOp",
+            dataField: "numeroMatricula",
+            text: "Nome",
             editable: false
         },
         {
@@ -120,6 +150,9 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
 
     return (
         <div>
+            <div style={{ display: "none" }} ref={refmodal} data-toggle="modal" data-target="#messageModal"></div>
+            <CustomPopup dataTargetID="messageModal" title={popupTitle} content={popupContent} isOk={isOkPopup} isError={isErrorPopup} />
+
             <div className="cm-header">
                 <div className="cm-header-inputs">
                     <div className="cm-box-label">
@@ -142,7 +175,7 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             </div>
 
             <div className="cm-body">
-                <CustomTable isAlternateRowColor="true" fieldKey="row" customcolumns={columns} customdata={dic} />
+                <CustomTable fieldKey="row" customcolumns={columns} customdata={dic} />
                 <div className="cm-body-box-button">
                     <button className="btn button-save" disabled={isLoading} onClick={saveAll}>{isLoading ? <ReactLoading type="spin" width="20px" height="24px" color="#FFF" /> : "Salvar"}</button>
                     <button className="btn button-back" disabled={isLoading} onClick={onBackButtonClick}>Voltar</button>

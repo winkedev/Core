@@ -489,7 +489,7 @@ BEGIN TRY
 	PICab.Id AS IDPlanoInspecaoCAB, PICaract.ID AS IDPlanoInspecaoCarac, MCab.Id AS IDMedicaoCab, MCaract.id AS IDMedicaoCarac, TM.Id AS IDTipoMedicao, MN1.id AS IDMotivoN1, MN2.id AS IDMotivoN2, OrdemProducao.id AS IDOrdemProducao,
 	PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.descCC, MCab.dataInicio, MCab.datafim, PICaract.posicao, PICaract.tipo, PICaract.caracteristica, PICaract.class, MCaract.numMedicao, 
 	MCaract.valorMedido, TM.descTipo, MN1.descMotivoN1 + '/' + MN2.descMotivoN2 AS justificativa, MJ.obs, MCaract.dataMedicao, dbo.OrdemProducao.codOP, CAST(PICaract.limInf AS VARCHAR(10)) 
-	+ '  - ' + CAST(PICaract.limSup AS VARCHAR(10)) AS limite
+	+ '  - ' + CAST(PICaract.limSup AS VARCHAR(10)) AS limite, MCaract.numMatricula
 	FROM     
 	dbo.OrdemProducao RIGHT OUTER JOIN
 	dbo.MedicoesCab AS MCab INNER JOIN
@@ -607,7 +607,7 @@ GO
 CREATE PROCEDURE spGetPlanoInspecaoCabBy
 (
 @CODIGOCC VARCHAR(50),
-@DESCITEM VARCHAR(50),
+@CODIGOITEM VARCHAR(50),
 @CODIGOOP VARCHAR(50),
 @DATAINICIAL DATETIME,
 @DATAFINAL DATETIME
@@ -620,7 +620,7 @@ BEGIN TRY
 	LEFT JOIN OrdemProducao OrdemProd ON MCab.idOrdemProducao = OrdemProd.id
 	WHERE 
 	PICab.codCC = @CODIGOCC AND 
-	PICab.descItem = ISNULL(@DESCITEM, PICab.descItem) AND 
+	PICab.codItem = ISNULL(@CODIGOITEM, PICab.codItem) AND 
 	OrdemProd.codOP = ISNULL(@CODIGOOP, OrdemProd.codOP) AND
 	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
 	CONVERT(DATE, MCab.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MCab.datafim))
@@ -702,32 +702,4 @@ BEGIN CATCH
 END CATCH
 
 GO
-
-/* Maquina: codCC+descCC
- material(item): codItem
-
-maquina: codCC+descCC
-item: ok
-descricao: descItem
-VersãoPlano() - verPlano 
-
-
-posicao: posicao
-tipo: tipo
-carac: ok
-class: ok
-limites: Limite
-Nmedicoes: ok
-desctipo (Tipo Medicao): ok
-justificatica: ok
-obd: ok
-data: ok
-
-header(detalhe):
-item: codItem
-descicao: descItem
-planotrabalho(plano Medicao): codCC+descCC
-versao: verPLano
-*/
-
 

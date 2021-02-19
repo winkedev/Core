@@ -97,5 +97,8 @@ namespace Br.Com.SPI.Core.Models.DTO
 
         [XmlElement("CodigoCCAndDescricaoCC"), JsonPropertyName("codigoCCAndDescricaoCC")]
         public string CodigoCCAndDescricaoCC { get => string.Concat(CodigoCC, " ", DescricaoCC); set => this.CodigoCCAndDescricaoCC = value; }
+
+        [XmlElement("NumeroMatricula"), JsonPropertyName("numeroMatricula")]
+        public string NumeroMatricula { get; set; }
     }
 }

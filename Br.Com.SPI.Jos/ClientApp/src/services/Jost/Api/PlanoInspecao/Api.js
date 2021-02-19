@@ -16,5 +16,29 @@ export const ApiPlanoInspecao = {
         }
 
         return resp.data;
-    }
+    },
+    getAllCodCC: async () => {
+        var resp;
+
+        try {
+            resp = await BaseApi.get('api/planoinspecao/getallcodcc')
+        }
+        catch (e) {
+            resp = MountError(e);
+        }
+
+        return resp.data;
+    },
+    getAllCodItem: async () => {
+        var resp;
+
+        try {
+            resp = await BaseApi.get('api/planoinspecao/getallcoditem')
+        }
+        catch (e) {
+            resp = MountError(e);
+        }
+
+        return resp.data;
+    },
 }
