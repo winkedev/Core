@@ -100,5 +100,14 @@ namespace Br.Com.SPI.Core.Models.DTO
 
         [XmlElement("NumeroMatricula"), JsonPropertyName("numeroMatricula")]
         public string NumeroMatricula { get; set; }
+
+        [XmlElement("LimiteInferior"), JsonPropertyName("limiteInferior")]
+        public decimal LimiteInferior { get; set; }
+
+        [XmlElement("LimiteSuperior"), JsonPropertyName("limiteSuperior")]
+        public decimal LimiteSuperior { get; set; }
+
+        [XmlElement("TipoCaracteristica"), JsonPropertyName("tipoCaracteristica")]
+        public string TipoCaracteristica { get; set; }
     }
 }

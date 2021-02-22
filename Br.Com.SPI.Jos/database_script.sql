@@ -489,7 +489,7 @@ BEGIN TRY
 	PICab.Id AS IDPlanoInspecaoCAB, PICaract.ID AS IDPlanoInspecaoCarac, MCab.Id AS IDMedicaoCab, MCaract.id AS IDMedicaoCarac, TM.Id AS IDTipoMedicao, MN1.id AS IDMotivoN1, MN2.id AS IDMotivoN2, OrdemProducao.id AS IDOrdemProducao,
 	PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.descCC, MCab.dataInicio, MCab.datafim, PICaract.posicao, PICaract.tipo, PICaract.caracteristica, PICaract.class, MCaract.numMedicao, 
 	MCaract.valorMedido, TM.descTipo, MN1.descMotivoN1 + '/' + MN2.descMotivoN2 AS justificativa, MJ.obs, MCaract.dataMedicao, dbo.OrdemProducao.codOP, CAST(PICaract.limInf AS VARCHAR(10)) 
-	+ '  - ' + CAST(PICaract.limSup AS VARCHAR(10)) AS limite, MCaract.numMatricula
+	+ '  - ' + CAST(PICaract.limSup AS VARCHAR(10)) AS limite, MCaract.numMatricula, PICaract.limInf, PICaract.limSup, PICaract.tipoCarac
 	FROM     
 	dbo.OrdemProducao RIGHT OUTER JOIN
 	dbo.MedicoesCab AS MCab INNER JOIN

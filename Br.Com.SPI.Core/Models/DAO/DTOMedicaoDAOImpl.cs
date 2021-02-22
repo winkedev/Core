@@ -82,6 +82,9 @@ namespace Br.Com.SPI.Core.Models.DAO
             dto.IDPlanoInspecaoCarac = row.ParseToInt64("IDPlanoInspecaoCarac");
             dto.IDTipoMedicao = row.ParseToInt64("IDTipoMedicao");
             dto.NumeroMatricula = row.ParseToString("numMatricula");
+            dto.LimiteInferior = row.ParseToDecimal("limInf");
+            dto.LimiteSuperior = row.ParseToDecimal("limSup");
+            dto.TipoCaracteristica = row.ParseToString("tipoCarac");
             return dto;
         }
 
