@@ -37,13 +37,13 @@ namespace Br.Com.SPI.Core.Models.DTO
         [XmlElement("CodigoItem"), JsonPropertyName("codigoItem")]
         public string CodigoItem { get; set; }
 
+        [Required(ErrorMessage = "DescricaoItem não pode ser nulo.")]
         [XmlElement("DescricaoItem"), JsonPropertyName("descricaoItem")]
         public string Descricaoitem { get; set; }
 
         [XmlElement("VerPlano"), JsonPropertyName("verPlano")]
         public string VerPlano { get; set; }
 
-        [Required(ErrorMessage = "CodigoCC não pode ser nulo.")]
         [XmlElement("CodigoCC"), JsonPropertyName("codigoCC")]
         public string CodigoCC { get; set; }
 
@@ -87,7 +87,7 @@ namespace Br.Com.SPI.Core.Models.DTO
         public DateTime DataMedicao { get; set; }
 
         [XmlElement("DataMedicaoShort"), JsonPropertyName("dataMedicaoShort")]
-        public string DataMedicaoShort { get => DataMedicao.ToShortDateString(); set => this.DataMedicaoShort = value; }
+        public string DataMedicaoShort { get => DataMedicao.ToString(@"dd/MM/yyyy HH:mm:ss"); set => this.DataMedicaoShort = value; }
 
         [XmlElement("CodigoOperacao"), JsonPropertyName("codigoOperacao")]
         public string CodigoOperacao { get; set; }

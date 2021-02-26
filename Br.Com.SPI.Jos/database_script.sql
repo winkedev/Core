@@ -501,7 +501,7 @@ BEGIN TRY
 	dbo.MotivosN2 AS MN2 ON MN1.id = MN2.idMotivoN1 ON MJ.idMotivoN2 = MN2.id ON MCaract.Id = MJ.idMedicoesCaract LEFT OUTER JOIN
 	dbo.TipoMedicoes AS TM ON MCaract.idTipoMedicao = TM.Id
 	WHERE 
-	PICab.codCC = @CODIGOCC AND 
+	PICab.codCC = ISNULL(@CODIGOCC, PICab.codCC) AND 
 	PICab.descItem = ISNULL(@DESCITEM, PICab.descItem) AND 
 	dbo.OrdemProducao.codOP = ISNULL(@CODIGOOP, dbo.OrdemProducao.codOP) AND
 	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
@@ -619,7 +619,7 @@ BEGIN TRY
 	LEFT JOIN MedicoesCab MCab ON PICab.Id = MCab.IdPlanoInspecaoCab
 	LEFT JOIN OrdemProducao OrdemProd ON MCab.idOrdemProducao = OrdemProd.id
 	WHERE 
-	PICab.codCC = @CODIGOCC AND 
+	PICab.codCC = ISNULL(@CODIGOCC, PICab.codCC) AND 
 	PICab.codItem = ISNULL(@CODIGOITEM, PICab.codItem) AND 
 	OrdemProd.codOP = ISNULL(@CODIGOOP, OrdemProd.codOP) AND
 	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND

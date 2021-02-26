@@ -24,7 +24,7 @@ namespace Br.Com.SPI.Core.Models
         public DateTime DataRI { get; set; }
 
         [XmlElement("DataMedicaoShort"), JsonPropertyName("dataMedicaoShort")]
-        public string DataMedicaoShort { get => DataRI.ToShortDateString(); set => this.DataMedicaoShort = value; }
+        public string DataMedicaoShort { get => DataRI.ToString(@"dd/MM/yyyy HH:mm:ss"); set => this.DataMedicaoShort = value; }
 
 
         [XmlElement("CodigoCCAndDescricaoCC"), JsonPropertyName("codigoCCAndDescricaoCC")]

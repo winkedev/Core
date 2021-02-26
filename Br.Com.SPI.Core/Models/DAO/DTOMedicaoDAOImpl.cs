@@ -26,7 +26,7 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             Dictionary<string, object> dic = new Dictionary<string, object>()
             {
-                { "CODIGOCC", codigoCC },
+                { "CODIGOCC", this.GetValueOrDbNull(codigoCC) },
                 { "DESCITEM", this.GetValueOrDbNull(descricaoItem)},
                 { "CODIGOOP", this.GetValueOrDbNull(codigoOP)},
                 { "DATAINICIAL", this.GetValueOrDbNull(dataInicial)},
