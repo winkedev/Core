@@ -42,6 +42,11 @@
             return new MotivoN1DAOImpl();
         }
 
+        public IMotivoN2DAO InitMotivoN2DAO()
+        {
+            return new MotivoN2DAOImpl();
+        }
+
         public ITipoMedicaoDAO InitTipoMedicaoDAO()
         {
             return new TipoMedicaoDAOImpl();

@@ -59,12 +59,18 @@ namespace Br.Com.SPI.Core.Models.DAO
 
         public MotivoN1 SaveUpdate(MotivoN1 t)
         {
-            var dt = this.GetDataTable("spSaveUpdateMotivosN1 @ID, @DescricaoMotivo, @DataRI", this.ParseToParameters(t));
+            var dt = this.GetDataTable("spSaveUpdateMotivosN1 @ID, @DESCRICAOMOTIVO, @DATARI", this.ParseToParameters(t));
             
             foreach(DbDataReader row in dt)
             {
                 Int64 id = row.ParseToInt64("ID");
                 t.ID = id > 0 ? id: t.ID;
+
+                foreach(MotivoN2 m in t.MotivoN2)
+                {
+                    new DAOFactory().InitMotivoN2DAO().SaveUpdate(m);
+                }
+
                 return t;
             }
             
@@ -78,15 +84,22 @@ namespace Br.Com.SPI.Core.Models.DAO
             m.ID = row.ParseToInt64("id");
             m.Descricao = row.ParseToString("descMotivoN1");
             m.DataRI = row.ParseToDatetime("dataRI");
+
+            try
+            {
+                m.MotivoN2 = new DAOFactory().InitMotivoN2DAO().GetByMotivoN1(m);
+            }
+            catch  { }
+
             return m;
         }
 
         public Dictionary<string, object> ParseToParameters(MotivoN1 t)
         {
             Dictionary<string, object> d = new Dictionary<string, object>();
-            d.Add("Id", t.ID);
-            d.Add("descMotivoN1", t.Descricao);
-            d.Add("dataRI", t.DataRI);
+            d.Add("ID", t.ID);
+            d.Add("DESCRICAOMOTIVO", t.Descricao);
+            d.Add("DATARI", t.DataRI);
 
             return d;
         }

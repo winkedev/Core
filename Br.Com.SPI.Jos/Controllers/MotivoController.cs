@@ -1,5 +1,6 @@
 ﻿using Br.Com.SPI.Core.Models;
 using Br.Com.SPI.Core.Models.DAO;
+using Br.Com.SPI.Jos.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -16,6 +17,30 @@ namespace Br.Com.SPI.Jos.Controllers
             List<MotivoN1> list = dao.InitMotivoN1DAO().GetAll();
             return this.WriteSucess(list, "dados retornados com sucesso.");
 
+        }
+
+
+        [HttpPost]
+        [Route("saveupdate")]
+        [CheckModel]
+        public IActionResult SaveUpdate([FromServices] DAOFactory dao, [FromBody] MotivoN1 motivo)
+        {
+            MotivoN1 result = dao.InitMotivoN1DAO().SaveUpdate(motivo);
+            return this.WriteSucess(result);
+        }
+
+        [HttpDelete]
+        [Route("deleteN2")]
+        public IActionResult DeleteMotivoN2([FromServices] DAOFactory dao, [FromBody] MotivoN2 motivo)
+        {
+            if (motivo.ID <= 0)
+            {
+                return this.WriteErrorInfo("Erro ao deletar MotivoN2, ID não pode ser nulo.");
+            }
+
+            var result = dao.InitMotivoN2DAO().Delete(motivo);
+
+            return this.WriteSucess(result);
         }
 
     }

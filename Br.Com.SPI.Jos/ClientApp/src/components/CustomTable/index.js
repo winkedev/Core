@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './style.css';
+/*import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';*/
 
 import { ReactComponent as ExcellSVG } from '../../assets/excell.svg';
 import { ReactComponent as PDFSVG } from '../../assets/pdf.svg';
@@ -12,7 +13,9 @@ import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import jspdf from 'jspdf';
 import 'jspdf-autotable';
 
-const CustomTable = ({ fieldKey, customcolumns, customdata, isAlternateRowColor }) => {
+import { SecurityConfig } from '../../services/SecurityConfig';
+
+const CustomTable = ({ fieldKey, customcolumns, customdata, isAlternateRowColor, validateNewValue, onValidateErrorEvent }) => {
 
     //#region Exemplos de Columns / Data e ActionFormatter
     /* const actionformatter = (cell, row) => {
@@ -94,6 +97,7 @@ const CustomTable = ({ fieldKey, customcolumns, customdata, isAlternateRowColor 
 
                 <div style={{ backgroundColor: "#FFF", margin: "10px 0" }}>
                     <BootstrapTable
+                        bootstrap4
                         id="table-to-xls"
                         keyField={fieldKey != null ? fieldKey : "id"}
                         columns={customcolumns}
@@ -105,8 +109,14 @@ const CustomTable = ({ fieldKey, customcolumns, customdata, isAlternateRowColor 
                             mode: "click",
                             beforeSaveCell(oldValue, newValue, row, column, done) {
                                 setTimeout(() => {
-                                    console.log(`old value: ${oldValue} new value: ${newValue}`);
-                                    done();
+                                    SecurityConfig.writeLogs("*CustomTable*", `old value: ${oldValue} new value: ${newValue}`);
+                                    if (validateNewValue(row, newValue)) {
+                                        done();
+                                    }
+                                    else {
+                                        onValidateErrorEvent();
+                                    }
+
                                 }, 0);
                                 return { async: true };
                             }

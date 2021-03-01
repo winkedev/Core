@@ -35,7 +35,7 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
         let resp = await ApiConsultaMedicao.getBy(dto);
         SecurityConfig.writeLogs(CONSULTAMEDICAODET_PREFIX, `Response from ApiConsultaMedicao.getBy(): ${resp?.sucess ? 'Ok' : "Error"}`);
 
-        setDic(resp.data);
+        setDic(resp?.data ?? []);
 
     }, [])
 
@@ -88,7 +88,7 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             dataField: "posicao",
             text: "Pos",
             editable: false,
-
+            sort: true
         },
         {
             dataField: "tipo",
@@ -147,7 +147,6 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
         },
     ]
 
-
     return (
         <div>
             <div style={{ display: "none" }} ref={refmodal} data-toggle="modal" data-target="#messageModal"></div>
@@ -175,7 +174,28 @@ const ConsultaMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             </div>
 
             <div className="cm-body">
-                <CustomTable fieldKey="row" customcolumns={columns} customdata={dic} />
+                <CustomTable fieldKey="row" customcolumns={columns} customdata={dic}
+                    validateNewValue={(currentRow, newValue) => {
+                        if (currentRow.tipoCaracteristica.toUpperCase().includes("OK/NOK")) {
+                            if (newValue.toUpperCase() == "OK" || newValue.toUpperCase() == "NOK") {
+                                return true;
+                            }
+                            return false;
+                        }
+
+                        let limiteInferior = parseFloat((parseFloat(currentRow.caracteristica.toString().replace(",", ".")) + parseFloat(currentRow.limiteInferior.toString().replace(",", "."))).toFixed(4));
+                        let limiteSuperior = parseFloat((parseFloat(currentRow.caracteristica.toString().replace(",", ".")) + parseFloat(currentRow.limiteSuperior.toString().replace(",", "."))).toFixed(4));
+                        let newVal = parseFloat(newValue.toString().replace(",", "."));
+
+                        if (newVal >= limiteInferior && newVal <= limiteSuperior) {
+                            return true;
+                        }
+
+                        return false;
+                    }}
+                    onValidateErrorEvent={() => {
+                        openModal("Erro ao validar campo", "Verifique os limites e o tipo de caracteristica.", false, true);
+                    }} />
                 <div className="cm-body-box-button">
                     <button className="btn button-save" disabled={isLoading} onClick={saveAll}>{isLoading ? <ReactLoading type="spin" width="20px" height="24px" color="#FFF" /> : "Salvar"}</button>
                     <button className="btn button-back" disabled={isLoading} onClick={onBackButtonClick}>Voltar</button>

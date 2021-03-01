@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useContext } from 'react'
 import './style.css';
 
 import { useHistory } from 'react-router-dom';
@@ -10,15 +10,19 @@ import { ReactComponent as FileSearchSVG } from '../../assets/filesearchbold.svg
 import { ReactComponent as UserSVG } from '../../assets/user.svg';
 import { ReactComponent as LogoutSVG } from '../../assets/logout.svg';
 import { ReactComponent as PlugSVG } from '../../assets/plug.svg';
+import { ReactComponent as EasyQualitySVG } from '../../assets/easy-quality.svg';
 
 import Logo from '../../assets/jost-logo1.png';
 import SPILogo from '../../assets/spi_logo.png';
+import SPILogoFC from '../../assets/spi_logo_fc.png';
+import SPILogoFE from '../../assets/spi_logo_fe.png';
 import DashboardDefault from '../DashboardDefault';
 import ConsultaMedicao from '../ConsultaMedicao';
 import Conexao from '../Conexao';
 
-const Dashboard = () => {
+import { SecurityConfig } from '../../services/SecurityConfig';
 
+const Dashboard = () => {
     const nav = useHistory();
     const refSidebarUsername = useRef(null);
     const refSidebarMedicao = useRef(null);
@@ -43,7 +47,12 @@ const Dashboard = () => {
         nav.push('/');
     }
 
+    const isAdminRole = () => {
+        return SecurityConfig.getUser()?.type == '0';
+    }
+
     const onMouseLeaveSidebar = () => {
+
         setIsActive(true);
 
         let areaExpandedUsername = document.getElementById('sidebar-username').getAttribute('aria-expanded');
@@ -70,7 +79,7 @@ const Dashboard = () => {
                         <div className="sidebar-header">
                             <div className="sidebar-header-box1">
                                 <i><UserSVG width={31} height={31} fill="#FFFFFF" opacity="0.5" /></i>
-                                <span>Username</span>
+                                <span>{SecurityConfig.getUser()?.username ?? "?"}</span>
                                 <a id="sidebar-username" ref={refSidebarUsername} href="#homeSubmenu"
                                     data-toggle="collapse"
                                     aria-expanded="false" style={{ paddingLeft: "15px", display: "flex", justifyContent: "center", alignItems: "center" }} className="dropdown-toggle">
@@ -118,14 +127,15 @@ const Dashboard = () => {
                                                     <span>Consulta Medição</span>
                                                 </a>
                                             </li>
-                                            <li>
-                                                <a href="javascript:void(0);" onClick={() => setIndexActive(1)}>
-                                                    <i>
-                                                        <FileEditSVG width={31} height={31} fill="#FFFFFF" opacity="0.5" />
-                                                    </i>
-                                                    <span>Cadastra Medição</span>
-                                                </a>
-                                            </li>
+                                            {isAdminRole() ?
+                                                <li>
+                                                    <a href="javascript:void(0);" onClick={() => setIndexActive(1)}>
+                                                        <i>
+                                                            <FileEditSVG width={31} height={31} fill="#FFFFFF" opacity="0.5" />
+                                                        </i>
+                                                        <span>Cadastra Medição</span>
+                                                    </a>
+                                                </li> : ""}
                                         </ul>
                                     </div>
                                 </li>
@@ -143,8 +153,9 @@ const Dashboard = () => {
                 </div>
             </div>
             <div id="dashboard-main">
-                <nav id={isActive ? "db-navbar-active" : ""} className="navbar d-flex justify-content-end align-items-center">
-                    <span className="navbar-brand"><i><img src={SPILogo} width={145} height={50} /></i></span>
+                <nav id={isActive ? "db-navbar-active" : ""} className="navbar db-navbar">
+                    <i><img src={SPILogoFE} width={145} height={66} style={{ marginRight: "20px" }} /></i>
+                    <EasyQualitySVG width="145px" height="66px" />
                 </nav>
                 <div id="dashboard-main-content">
                     {
