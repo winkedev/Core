@@ -29,7 +29,7 @@ namespace Br.Com.SPI.Jos.Controllers
             return this.WriteSucess(result);
         }
 
-        [HttpDelete]
+        [HttpPost]
         [Route("deleteN2")]
         public IActionResult DeleteMotivoN2([FromServices] DAOFactory dao, [FromBody] MotivoN2 motivo)
         {

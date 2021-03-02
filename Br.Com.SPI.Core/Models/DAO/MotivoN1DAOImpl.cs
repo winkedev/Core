@@ -98,8 +98,8 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             Dictionary<string, object> d = new Dictionary<string, object>();
             d.Add("ID", t.ID);
-            d.Add("DESCRICAOMOTIVO", t.Descricao);
-            d.Add("DATARI", t.DataRI);
+            d.Add("DESCRICAOMOTIVO", this.GetValueOrDbNull(t.Descricao));
+            d.Add("DATARI", this.GetValueOrDbNull(t.DataRI));
 
             return d;
         }
