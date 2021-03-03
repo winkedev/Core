@@ -89,6 +89,9 @@ namespace Br.Com.SPI.Core.Models.DAO
             p.CodigoCC = row.ParseToString("codCC");
             p.DescricaoCC = row.ParseToString("descCC");
             p.DataRI = row.ParseToDatetime("dataRI");
+            p.PlanoPadrao = row.ParseToString("planoPadrao");
+            p.PlanoPadraoVersao = row.ParseToString("planoPadraoVersao");
+            p.CT = row.ParseToString("CT");
 
             try
             {
@@ -116,6 +119,9 @@ namespace Br.Com.SPI.Core.Models.DAO
             p.DescricaoCC = row.ParseToString("descCC");
             p.DataRI = row.ParseToDatetime("dataRI");
             p.CodigoOP = row.ParseToString("codOP");
+            p.PlanoPadrao = row.ParseToString("planoPadrao");
+            p.PlanoPadraoVersao = row.ParseToString("planoPadraoVersao");
+            p.CT = row.ParseToString("CT");
 
             return p;
         }

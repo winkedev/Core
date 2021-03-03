@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './style.css';
+
+import Swal from 'sweetalert2';
 
 import ReactLoading from 'react-loading';
 
@@ -8,7 +10,7 @@ import CustomTable from '../../components/CustomTable';
 import CustomDatePicker from '../../components/CustomDatePicker';
 import CustomPopup from '../../components/CustomPopup';
 
-import ConsultaMedicaoDetalhada from '../ConsultaMedicaoDetalhada';
+import CadastraMedicaoDetalhada from '../CadastraMedicaoDetalhada';
 
 import { ApiPlanoInspecao } from '../../services/Jost/Api/PlanoInspecao/Api';
 import { ApiOrdemProducao } from '../../services/Jost/Api/OrdemProducao/Api';
@@ -18,9 +20,9 @@ import { faFile } from '@fortawesome/free-solid-svg-icons';
 
 import { SecurityConfig } from '../../services/SecurityConfig';
 
-const ConsultaMedicao = () => {
+const CadastraMedicao = () => {
 
-    const CONSULTAMEDICAO_PREFIX = '*ConsultaMedicao*';
+    const CONSULTAMEDICAO_PREFIX = '*CadastraMedicao*';
 
     const refmodal = useRef(null);
 
@@ -122,7 +124,6 @@ const ConsultaMedicao = () => {
     const searchData = async () => {
 
         try {
-
             if (currentDescricaoItem == null || currentDescricaoItem == '') {
                 openModal("Aviso", "Item deve ser preenchido para concluir a busca.", true);
                 return;
@@ -238,11 +239,11 @@ const ConsultaMedicao = () => {
                 <div>
 
                     <div className="cm-title">
-                        <h4>Consulta Medição</h4>
+                        <h4>Cadastro Medição</h4>
                     </div>
 
 
-                    {isMedicaoDetalhada ? <ConsultaMedicaoDetalhada customdata={currentMedicao} onBackButtonClick={() => unmountMedicaoDetalhada()} /> :
+                    {isMedicaoDetalhada ? <CadastraMedicaoDetalhada customdata={currentMedicao} onBackButtonClick={() => unmountMedicaoDetalhada()} /> :
                         <div>
                             <div style={{ display: "none" }} ref={refmodal} data-toggle="modal" data-target="#messageModal"></div>
                             <CustomPopup dataTargetID="messageModal" title={modalTitle} content={modalContent} isWarning={isModalWarning} />
@@ -294,4 +295,4 @@ const ConsultaMedicao = () => {
         </div>)
 }
 
-export default ConsultaMedicao;
+export default CadastraMedicao;

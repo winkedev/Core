@@ -66,7 +66,7 @@ namespace Br.Com.SPI.Core.Models.DAO
                 Int64 id = row.ParseToInt64("ID");
                 t.ID = id > 0 ? id: t.ID;
 
-                foreach(MotivoN2 m in t.MotivoN2)
+                foreach(MotivoN2 m in t?.MotivoN2)
                 {
                     new DAOFactory().InitMotivoN2DAO().SaveUpdate(m);
                 }

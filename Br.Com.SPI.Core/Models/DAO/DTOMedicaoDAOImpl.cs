@@ -69,7 +69,6 @@ namespace Br.Com.SPI.Core.Models.DAO
             dto.ValorMedido = row.ParseToString("valorMedido");
             dto.DescricaoTipo = row.ParseToString("descTipo");
             dto.Justificativa = row.ParseToString("justificativa");
-            dto.Observacao = row.ParseToString("obs");
             dto.DataMedicao = row.ParseToDatetime("dataMedicao");
             dto.CodigoOperacao = row.ParseToString("codOP");
             dto.Limite = row.ParseToString("limite");
@@ -85,6 +84,8 @@ namespace Br.Com.SPI.Core.Models.DAO
             dto.LimiteInferior = row.ParseToDecimal("limInf");
             dto.LimiteSuperior = row.ParseToDecimal("limSup");
             dto.TipoCaracteristica = row.ParseToString("tipoCarac");
+            dto.RelN = row.ParseToString("relN");
+            dto.DSV = row.ParseToString("DSV");
             return dto;
         }
 

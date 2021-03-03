@@ -77,11 +77,8 @@ namespace Br.Com.SPI.Core.Models.DTO
         [XmlElement("DescricaoTipo"), JsonPropertyName("descricaoTipo")]
         public string DescricaoTipo { get; set; }
 
-        [XmlElement("Justificativa"), JsonPropertyName("Justificativa")]
+        [XmlElement("Justificativa"), JsonPropertyName("justificativa")]
         public string Justificativa { get; set; }
-
-        [XmlElement("Observacao"), JsonPropertyName("observacao")]
-        public string Observacao { get; set; }
 
         [XmlElement("DataMedicao"), JsonPropertyName("dataMedicao")]
         public DateTime DataMedicao { get; set; }
@@ -109,5 +106,11 @@ namespace Br.Com.SPI.Core.Models.DTO
 
         [XmlElement("TipoCaracteristica"), JsonPropertyName("tipoCaracteristica")]
         public string TipoCaracteristica { get; set; }
+
+        [XmlElement("RelN"), JsonPropertyName("relN")]
+        public string RelN { get; set; }
+
+        [XmlElement("DSV"), JsonPropertyName("dsv")]
+        public string DSV { get; set; }
     }
 }

@@ -51,5 +51,10 @@ namespace Br.Com.SPI.Core.Models
                     break;
             }
         }
+
+        public MotivoN1()
+        {
+            this.MotivoN2 = new ObservableCollection<MotivoN2>();
+        }
     }
 }

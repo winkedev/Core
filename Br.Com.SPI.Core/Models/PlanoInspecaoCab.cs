@@ -21,6 +21,10 @@ namespace Br.Com.SPI.Core.Models
 
         public string PlanoPadrao { get; set; }
 
+        public string PlanoPadraoVersao { get; set; }
+
+        public string CT { get; set; }
+
         public DateTime DataRI { get; set; }
 
         [XmlElement("DataMedicaoShort"), JsonPropertyName("dataMedicaoShort")]

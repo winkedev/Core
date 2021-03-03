@@ -453,7 +453,7 @@ GO
 CREATE VIEW medicoes
 AS
 SELECT TOP (100) PERCENT PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.descCC, MCab.dataInicio, MCab.datafim, PICaract.posicao, PICaract.tipo, PICaract.caracteristica, PICaract.class, MCaract.numMedicao, 
-                  MCaract.valorMedido, TM.descTipo, MN1.descMotivoN1 + '/' + MN2.descMotivoN2 AS justificativa, MJ.obs, MCaract.dataMedicao, dbo.OrdemProducao.codOP, CAST(PICaract.limInf AS VARCHAR(10)) 
+                  MCaract.valorMedido, TM.descTipo, MN1.descMotivoN1 + '/' + MN2.descMotivoN2 AS justificativa, MJ.RelatorioDeNaoConformidadeN AS relN, MJ.SolicitacaoDeDesvioDSV AS DSV, MCaract.dataMedicao, dbo.OrdemProducao.codOP, CAST(PICaract.limInf AS VARCHAR(10)) 
                   + '  - ' + CAST(PICaract.limSup AS VARCHAR(10)) AS limite
 FROM     dbo.OrdemProducao RIGHT OUTER JOIN
                   dbo.MedicoesCab AS MCab INNER JOIN
@@ -488,7 +488,7 @@ BEGIN TRY
 	SELECT ROW_NUMBER() OVER (ORDER BY PICaract.posicao) AS Row,
 	PICab.Id AS IDPlanoInspecaoCAB, PICaract.ID AS IDPlanoInspecaoCarac, MCab.Id AS IDMedicaoCab, MCaract.id AS IDMedicaoCarac, TM.Id AS IDTipoMedicao, MN1.id AS IDMotivoN1, MN2.id AS IDMotivoN2, OrdemProducao.id AS IDOrdemProducao,
 	PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.descCC, MCab.dataInicio, MCab.datafim, PICaract.posicao, PICaract.tipo, PICaract.caracteristica, PICaract.class, MCaract.numMedicao, 
-	MCaract.valorMedido, TM.descTipo, MN1.descMotivoN1 + '/' + MN2.descMotivoN2 AS justificativa, MJ.obs, MCaract.dataMedicao, dbo.OrdemProducao.codOP, CAST(PICaract.limInf AS VARCHAR(10)) 
+	MCaract.valorMedido, TM.descTipo, MN1.descMotivoN1 + '/' + MN2.descMotivoN2 AS justificativa, MJ.RelatorioDeNaoConformidadeN AS relN, MJ.SolicitacaoDeDesvioDSV AS DSV, MCaract.dataMedicao, dbo.OrdemProducao.codOP, CAST(PICaract.limInf AS VARCHAR(10)) 
 	+ '  - ' + CAST(PICaract.limSup AS VARCHAR(10)) AS limite, MCaract.numMatricula, PICaract.limInf, PICaract.limSup, PICaract.tipoCarac
 	FROM     
 	dbo.OrdemProducao RIGHT OUTER JOIN
@@ -614,7 +614,7 @@ CREATE PROCEDURE spGetPlanoInspecaoCabBy
 )
 AS
 BEGIN TRY
-	SELECT PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, PICab.dataRI, OrdemProd.codOP
+	SELECT PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, PICab.dataRI, PICab.CT, PICab.planoPadraoVersao, OrdemProd.codOP
 	FROM PlanoInspecaoCab PICab 
 	LEFT JOIN MedicoesCab MCab ON PICab.Id = MCab.IdPlanoInspecaoCab
 	LEFT JOIN OrdemProducao OrdemProd ON MCab.idOrdemProducao = OrdemProd.id
@@ -624,7 +624,7 @@ BEGIN TRY
 	OrdemProd.codOP = ISNULL(@CODIGOOP, OrdemProd.codOP) AND
 	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
 	CONVERT(DATE, MCab.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MCab.datafim))
-	GROUP BY PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, PICab.dataRI, OrdemProd.codOP
+	GROUP BY PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, PICab.dataRI, PICab.CT, PICab.planoPadraoVersao, OrdemProd.codOP
 
 END TRY
 BEGIN CATCH
