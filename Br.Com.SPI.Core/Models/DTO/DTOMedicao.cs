@@ -44,6 +44,12 @@ namespace Br.Com.SPI.Core.Models.DTO
         [XmlElement("VerPlano"), JsonPropertyName("verPlano")]
         public string VerPlano { get; set; }
 
+        [XmlElement("PlanoPadraoVersao"), JsonPropertyName("planoPadraoVersao")]
+        public string PlanoPadraoVersao { get; set; }
+
+        [XmlElement("CT"), JsonPropertyName("ct")]
+        public string CT { get; set; }
+
         [XmlElement("CodigoCC"), JsonPropertyName("codigoCC")]
         public string CodigoCC { get; set; }
 

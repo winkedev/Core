@@ -53,20 +53,35 @@ namespace Br.Com.SPI.Core.Models.DAO
             return list;
         }
 
-        public List<DTOPlanoInspecao> GetPlanoInspecaoCabBy(string codigoCC, string descricaoItem, string codigoOP, DateTime dataInicial, DateTime dataFinal)
+        public List<PlanoInspecaoCab> GetAllVersaoPlanoPadrao()
+        {
+            List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
+
+            var dt = this.GetDataTable("spGetPlanoInspecaoCabVersaoPlanoPadrao");
+
+            foreach(DbDataReader row in dt)
+            {
+                list.Add(this.ParseToDTO(row));
+            }
+
+            return list;
+        }
+
+        public List<DTOPlanoInspecao> GetPlanoInspecaoCabBy(string ct, string descricaoItem, string codigoOP, string planoPadraoVersao, DateTime dataInicial, DateTime dataFinal)
         {
             Dictionary<string, object> dic = new Dictionary<string, object>()
             {
-                { "CODIGOCC", this.GetValueOrDbNull(codigoCC) },
+                { "CT", this.GetValueOrDbNull(ct) },
                 { "DESCRICAOITEM", this.GetValueOrDbNull(descricaoItem) },
                 { "CODIGOOP", this.GetValueOrDbNull(codigoOP) },
+                { "PPVERSAO", this.GetValueOrDbNull(planoPadraoVersao) },
                 { "DATAINICIAL", this.GetValueOrDbNull(dataInicial) },
                 { "DATAFINAL", this.GetValueOrDbNull(dataFinal) }
             };
 
             List<DTOPlanoInspecao> list = new List<DTOPlanoInspecao>();
 
-            foreach(DbDataReader row in this.GetDataTable("spGetPlanoInspecaoCabBy @CODIGOCC, @DESCRICAOITEM, @CODIGOOP, @DATAINICIAL, @DATAFINAL", dic))
+            foreach(DbDataReader row in this.GetDataTable("spGetPlanoInspecaoCabBy @CT, @DESCRICAOITEM, @CODIGOOP, @PPVERSAO, @DATAINICIAL, @DATAFINAL", dic))
             {
                 list.Add(this.ParseToSimpleDTO(row));
             }

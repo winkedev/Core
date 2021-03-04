@@ -21,7 +21,7 @@ namespace Br.Com.SPI.Core.Models.DAO
         /// <param name="dataFinal"></param>
         /// <param name="codigoOP"></param>
         /// <returns></returns>
-        List<DTOMedicao> GetMedicaoBy(string codigoCC, string descricaoItem, string codigoOP, DateTime dataInicial, DateTime dataFinal);
+        List<DTOMedicao> GetMedicaoBy(string ct, string descricaoItem, string codigoOP, string planoPadraoVersao, DateTime dataInicial, DateTime dataFinal);
 
         bool UpdateAll(List<DTOMedicao> list);
     }

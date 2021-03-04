@@ -15,7 +15,7 @@ namespace Br.Com.SPI.Jos.Controllers
         [CheckModel]
         public IActionResult GetMedicaoBy([FromServices] DAOFactory dao, [FromBody] DTOMedicao dto)
         {
-            List<DTOMedicao> list = dao.InitDTOMedicaoDAO().GetMedicaoBy(dto.CodigoCC, dto.Descricaoitem, dto.CodigoOperacao, dto.DataInicio, dto.DataFim);
+            List<DTOMedicao> list = dao.InitDTOMedicaoDAO().GetMedicaoBy(dto.CT, dto.Descricaoitem, dto.CodigoOperacao, dto.PlanoPadraoVersao, dto.DataInicio, dto.DataFim);
 
             return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo("Erro ao recuperar medicoes"); 
         }
