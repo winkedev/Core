@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Br.Com.SPI.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Text;
 
 namespace Br.Com.SPI.Core.Models.DAO
@@ -62,7 +64,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             }
         }
 
-        public void CheckPatternError(DbDataReader rows)
+        public void CheckPatternError(IEnumerable<DbDataReader> rows)
         {
             
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Common;
+using System.Linq;
 using System.Text;
 
 namespace Br.Com.SPI.Core.Models.DAO
@@ -77,6 +78,7 @@ namespace Br.Com.SPI.Core.Models.DAO
 
             foreach(DbDataReader row in dt)
             {
+                var retoro = row.ParseToString("Retorno");
                 return t;
             }
 

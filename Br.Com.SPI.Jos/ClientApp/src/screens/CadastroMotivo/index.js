@@ -13,10 +13,12 @@ import CustomTable from '../../components/CustomTable';
 
 import { ReactComponent as DeleteSVG } from '../../assets/delete.svg';
 import { ReactComponent as EditSVG } from '../../assets/edit.svg';
+import { ReactComponent as PlusSVG } from '../../assets/plus.svg';
+import Swal from 'sweetalert2';
 
 const CadastroMotivo = () => {
 
-    const refModal = useRef(null);
+    const refSelectMotivo = useRef();
 
     const [isLoading, setIsloading] = useState(true);
     const [isEditLoading, setIsEditLoading] = useState(false);
@@ -47,12 +49,12 @@ const CadastroMotivo = () => {
     const consumeMotivosAndFulltable = async () => {
         let resp = await ApiMotivo.getAll();
 
-        console.log(resp);
-
         if (resp?.data?.length > 0) {
             setFullMotivos(resp.data);
             fillSelect(resp.data);
-            fillDataAfterRefresh(document.getElementById("idNaoConformeSelect").value, resp.data);
+
+            let currentSelectValue = refSelectMotivo.current.select.getValue();
+            fillDataAfterRefresh(currentSelectValue.length > 0 ? currentSelectValue[0].value : -1, resp.data);
         }
     }
 
@@ -62,8 +64,8 @@ const CadastroMotivo = () => {
         if (data?.length > 0) {
             Object.keys(data).map((k, v) => {
                 respdata.push({
-                    key: data[v].id,
-                    value: data[v].descricao
+                    label: data[v].descricao,
+                    value: data[v].id,
                 })
             })
 
@@ -73,7 +75,6 @@ const CadastroMotivo = () => {
 
     const fillData = (e) => {
 
-        console.log(fullMotivos);
         let tableData = [];
         setTableData([]);
 
@@ -92,14 +93,6 @@ const CadastroMotivo = () => {
                         });
                     });
                 }
-                else {
-                    tableData.push({
-                        idN1: currentMotivo.id,
-                        idN2: -1,
-                        descricaoN1: currentMotivo.descricao,
-                        descricaoN2: ''
-                    });
-                }
             }
         })
 
@@ -108,7 +101,6 @@ const CadastroMotivo = () => {
 
     const fillDataAfterRefresh = (e, refreshData) => {
 
-        console.log(refreshData);
         let tableData = [];
         setTableData([]);
 
@@ -127,14 +119,6 @@ const CadastroMotivo = () => {
                         });
                     });
                 }
-                else {
-                    tableData.push({
-                        idN1: currentMotivo.id,
-                        idN2: -1,
-                        descricaoN1: currentMotivo.descricao,
-                        descricaoN2: ''
-                    });
-                }
             }
         })
 
@@ -146,10 +130,10 @@ const CadastroMotivo = () => {
         return (
             <div>
                 <button className="btn" disabled={row.idN2 == -1} onClick={() => editCausa(row)} style={{ width: "64px" }} >
-                    <EditSVG fill="#01579B" width={32} height={32} />
+                    <EditSVG fill="#01579B" width={20} height={20} />
                 </button>
                 <button className="btn" disabled={row.idN2 == -1} onClick={() => deleteCausa(row)} style={{ width: "64px" }}>
-                    <DeleteSVG fill="red" width={32} height={32} />
+                    <DeleteSVG fill="red" width={20} height={20} />
                 </button>
             </div>
         )
@@ -162,6 +146,17 @@ const CadastroMotivo = () => {
             "<span class='input-group-text' id='basic-addon1'>Causa: </span>" +
             "</div>" +
             "<input id='id-input-descricao' type='text' class='form-control' placeholder='Descrição...' value='" + row.descricaoN2 + "' aria-label='Username' aria-describedby='basic-addon1' />" +
+            "</div>" +
+            "</div>"
+    }
+
+    const mountEditNaoConforme = () => {
+        return "<div class='cadastro-motivo-edit-inputs-container'>" +
+            "<div class='cadastro-motivo-edit-inputs'>" +
+            "<div class='input-group-prepend'>" +
+            "<span class='input-group-text' id='basic-addon1'>Não conforme: </span>" +
+            "</div>" +
+            "<input id='id-input-descricao' type='text' class='form-control' placeholder='Descrição...' value='" + currentSelectMotivo.descricao + "' aria-label='Username' aria-describedby='basic-addon1' />" +
             "</div>" +
             "</div>"
     }
@@ -187,6 +182,54 @@ const CadastroMotivo = () => {
             "<input id='id-input-descricao' type='text' class='form-control' placeholder='Descrição...' aria-label='Username' aria-describedby='basic-addon1' />" +
             "</div>" +
             "</div>"
+    }
+
+    const ediNaoConforme = async () => {
+
+        let currentSelectValue = refSelectMotivo.current.select.getValue();
+
+        if (currentSelectValue == null || currentSelectValue.length == 0) {
+            await swalMessagePopup("Aviso", "É necessario selecionar não conforme para editar.", "warning");
+            return;
+        }
+
+        let resp = await swalConfirmPopup(
+            "Editar",
+            "",
+            "warning",
+            "Confirmar",
+            null,
+            "Cancelar",
+            false,
+            mountEditNaoConforme(),
+            true,
+            () => {
+                let value = document.getElementById("id-input-descricao").value;
+
+                if (value != null && value.length > 0) {
+                    let motivoToEdit = clone(currentSelectMotivo);
+                    motivoToEdit.descricao = value;
+
+                    return ApiMotivo.saveUpdate(motivoToEdit).then(r => {
+                        if (r?.sucess) {
+                            return true;
+                        }
+
+                        return false;
+                    })
+                }
+                else {
+                    return swalMessagePopup("Erro", "Erro ao atualizar não conforme.", "error");
+                }
+            }
+        );
+
+        if (resp.isConfirmed) {
+            await swalMessagePopup("Sucesso", "Não conforme atualizado com sucesso.", "success");
+            await consumeMotivosAndFulltable();
+            refSelectMotivo.current.select.clearValue();
+        }
+
     }
 
     const editCausa = async (row) => {
@@ -241,12 +284,60 @@ const CadastroMotivo = () => {
             null,
             true,
             () => {
-                return ApiMotivo.deleteN2({ id: row.idN2 });
+                return ApiMotivo.deleteN2({ id: row.idN2 }).then(r => {
+                    console.log(r);
+                    if (r?.sucess) {
+                        return true;
+                    }
+                    return false;
+                });
             }
         )
 
         if (resp.isConfirmed) {
             await consumeMotivosAndFulltable();
+        }
+        else if (resp.isDenied) {
+            await swalMessagePopup("Erro", "Erro ao excluir causa.", "error");
+        }
+    }
+
+    const deleteNaoConforme = async () => {
+
+        let currentSelectValue = refSelectMotivo.current.select.getValue();
+
+        if (currentSelectValue == null || currentSelectValue.length == 0) {
+            await swalMessagePopup("Aviso", "É necessario selecionar não conforme para excluir.", "warning");
+            return;
+        }
+
+        let resp = await swalConfirmPopup(
+            'Excluir',
+            `Deseja excluir ${currentSelectMotivo.descricao} permanentemente?`,
+            'warning',
+            "Confirmar",
+            null,
+            null,
+            false,
+            null,
+            true,
+            () => {
+                return ApiMotivo.deleteN1({ id: currentSelectMotivo.id }).then(r => {
+                    console.log(r);
+                    if (r?.sucess) {
+                        return true;
+                    }
+                    else {
+                        return swalMessagePopup("Erro", "Erro ao excluir não conforme.", "error");
+                    }
+                });
+            }
+        )
+
+        if (resp.isConfirmed) {
+            await swalMessagePopup("Sucesso", "Não conforme excluido com sucesso.", "success");
+            await consumeMotivosAndFulltable();
+            refSelectMotivo.current.select.clearValue();
         }
     }
 
@@ -265,15 +356,13 @@ const CadastroMotivo = () => {
                 var value = document.getElementById("id-input-descricao").value;
 
                 if (value != null && value != '') {
-                    return ApiMotivo.saveUpdate({ descricao: value })
+                    return ApiMotivo.saveUpdate({ descricao: value, dataRI: new Date().toISOString() })
                         .then(res => {
                             if (res?.sucess) {
-                                swalMessagePopup("Sucesso", `Não conforme inserido com sucesso.`, "success");
                                 return true;
                             }
                             else {
-                                swalMessagePopup("Erro", `Erro ao atualizar motivo: ${res?.message}`, "error");
-                                return false;
+                                return swalMessagePopup("Erro", 'Erro ao cadastrar não conforme.', 'error');
                             }
                         });
                 }
@@ -281,11 +370,20 @@ const CadastroMotivo = () => {
         );
 
         if (resp.isConfirmed) {
+            await swalMessagePopup("Sucesso", 'Não conforme cadastrado com sucesso.', 'success');
             await consumeMotivosAndFulltable();
         }
     }
 
     const cadastrarCausa = async () => {
+
+        let currentSelectValue = refSelectMotivo.current.select.getValue();
+
+        if (currentSelectValue == null || currentSelectValue.length == 0) {
+            await swalMessagePopup("Aviso", "É necessario selecionar não conforme para cadastrar uma nova causa.", "warning");
+            return;
+        }
+
         let resp = await swalConfirmPopup(
             'Cadastro Causa',
             '',
@@ -301,8 +399,8 @@ const CadastroMotivo = () => {
 
                 if (value != null && value != '') {
 
-                    var currentMotivo;
 
+                    var currentMotivo;
                     Object.keys(fullMotivos).map((k, v) => {
                         if (fullMotivos[v].id == currentSelectMotivo.id) {
                             currentMotivo = clone(fullMotivos[v]);
@@ -312,26 +410,26 @@ const CadastroMotivo = () => {
                         }
                     });
 
-                    return ApiMotivo.saveUpdate(currentMotivo)
-                        .then(res => {
-                            if (res?.sucess) {
-                                return true;
-                            }
-                            else {
-                                swalMessagePopup("Erro", `Erro ao atualizar motivo: ${res?.message}`, "error");
-                                return false;
-                            }
-                        });
+                    return ApiMotivo.saveUpdate(currentMotivo).then(r => {
+                        if (r?.sucess) {
+                            return true;
+                        }
+                        return false;
+                    })
                 }
             }
         );
 
         if (resp.isConfirmed) {
+            await swalMessagePopup("Sucesso", "Causa cadastrada com sucesso.", "success");
             await consumeMotivosAndFulltable();
+        }
+        else if (resp.isDenied) {
+            await swalMessagePopup("Erro", "Erro ao cadastrar causa.", "error");
         }
     }
 
-    var columns = [
+    var columnsCausa = [
         {
             dataField: "idN1",
             text: "IDN1",
@@ -345,50 +443,43 @@ const CadastroMotivo = () => {
             hidden: true
         },
         {
-            dataField: "descricaoN1",
-            text: "Não Conforme",
-            editable: false
-        },
-        {
             dataField: "descricaoN2",
-            text: "Causa",
+            text: "Descrição Causa",
             editable: false
         },
         {
-            dataField: "id",
-            text: "Ações",
-            formatter: actionFormatter,
-            editable: false
-        }
+            dataField: "acoes",
+            text: "Ação",
+            editable: false,
+            formatter: actionFormatter
+        },
     ]
 
     return (
         <div className="cadastro-motivo-container">
 
-
-
-            <button id="bt-dismiss" style={{ display: "none" }} data-dismiss="modal" data-target="#EditCausaModal" ref={refModal} />
             {isLoading ? <div style={{ height: "500px" }} className="d-flex justify-content-center align-items-center"><ReactLoading type="spin" width={128} height={128} color="#FFFFFF" /> </div> :
                 <div className="cadastro-motivo-wrap">
-
-                    <h4>Cadastro Motivos</h4>
-                    <div className="cadastro-motivo-inputs col">
-                        <div className="row">
-                            <CustomSelectPicker ID="idNaoConformeSelect" initWithEmptyValue classname="col-3" dict={selectData} title="Não conforme" onChangeEvent={(e) => fillData(e.target.value)} />
+                    <span className="cadastro-motivo-title">Cadastro Motivos</span>
+                    <div className="cadastro-motivo-inputs">
+                        <CustomSelectPicker REF={refSelectMotivo} ID="idNaoConformeSelect" classname="col-3" dict={selectData} title="Não conforme" onChangeEvent={(e) => fillData(e?.value)} />
+                        <div style={{ display: "flex", alignItems: "flex-end" }}>
+                            <button onClick={ediNaoConforme} className="btn" style={{ padding: "3px" }}><EditSVG width={32} height={32} fill="#01579B"></EditSVG></button>
+                            <button onClick={deleteNaoConforme} className="btn" style={{ padding: "3px" }}><DeleteSVG width={32} height={32} fill="#FF0000"></DeleteSVG></button>
                         </div>
-                        <div className="row justify-content-end cadastro-motivo-buttons">
-                            <button className="btn col-2 bg-primary-green color-white" onClick={cadastrarNaoConforme}>Cadastrar Não Conforme</button>
-                            <button disabled={currentSelectMotivo == null || currentSelectMotivo.id <= 0} className="btn col-2 bg-primary-orange color-white" onClick={cadastrarCausa}>Cadastrar Causa</button>
-                        </div>
-                    </div>
-                    <div className="row cadastro-motivo-table">
-                        <div className="col-12">
-                            <CustomTable customcolumns={columns} customdata={tableData} />
+                        <div style={{ width: "100%", display: "flex", alignItems: "flex-end", justifyContent: "flex-end" }}>
+                            <button onClick={cadastrarNaoConforme} className="btn bg-primary-green color-white cadastro-motivo-table-bt"><span style={{ paddingRight: "4px" }}>Novo Não Conforme</span><PlusSVG width={26} height={26} fill="#FFFFFF"></PlusSVG></button>
                         </div>
                     </div>
-                </div>
+                    <div className="cadastro-motivo-table">
+                        <CustomTable customcolumns={columnsCausa} customdata={tableData} />
+                        <div className="cadastro-motivo-table-buttons" >
+                            <button className="btn bg-primary-green color-white cadastro-motivo-table-bt" onClick={cadastrarCausa}><span>Nova causa</span> <PlusSVG width={26} height={26} fill="#FFFFFF" /></button>
+                        </div>
+                    </div>
+                </div >
             }
-        </div>
+        </div >
     )
 }
 

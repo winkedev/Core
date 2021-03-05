@@ -7,6 +7,7 @@ import CustomSelectPicker from '../../components/CustomSelectPicker';
 import CustomTable from '../../components/CustomTable';
 import CustomDatePicker from '../../components/CustomDatePicker';
 import CustomPopup from '../../components/CustomPopup';
+import { swalMessagePopup } from '../../components/SwalPopup';
 
 import ConsultaMedicaoDetalhada from '../ConsultaMedicaoDetalhada';
 
@@ -23,6 +24,10 @@ const ConsultaMedicao = () => {
     const CONSULTAMEDICAO_PREFIX = '*ConsultaMedicao*';
 
     const refmodal = useRef(null);
+    const refCentroTrabalho = useRef(null);
+    const refMaterial = useRef(null);
+    const refOrdemProducao = useRef(null);
+    const refVersaoPadrao = useRef(null);
 
     const [modalTitle, setModalTitle] = useState();
     const [modalContent, setmodalContent] = useState();
@@ -34,23 +39,27 @@ const ConsultaMedicao = () => {
     const [dicMaquinas, setDicMaquinas] = useState([])
     const [dicMaterial, setDicMaterial] = useState([])
     const [dicOrdemProducao, setDicOrdemProducao] = useState([]);
+    const [dicVersaoPadrao, setDicVersaoPadrao] = useState([]);
+
     const [initialDate, setInitialDate] = useState(new Date());
     const [finalDate, setFinalDate] = useState(new Date());
     const [medicaoData, setMedicaoData] = useState([]);
     const [isMedicaoDetalhada, setIsMedicaoDetalhada] = useState(false);
 
-    const [currentCodigoCC, setCurrentCodigoCC] = useState(null);
+    const [currentCT, setCurrentCT] = useState(null);
     const [currentDescricaoItem, setCurrentDescricaoItem] = useState(null);
     const [currentCodigoOp, setCurrentCodigoOp] = useState(null);
     const [currentInitialDate, setCurrentInitialDate] = useState(new Date());
     const [currentFinalDate, setCurrentFinalDate] = useState(new Date());
     const [currentMedicao, setCurrentMedicao] = useState({});
+    const [currentVersaoPP, setCurrentVersaoPP] = useState(null);
 
     useEffect(async () => {
 
         await fillMaquina();
         await fillItem();
         await fillOrdemProducao();
+        await fillVersaoPadrao();
         setIsLoading(false);
 
     }, [])
@@ -73,8 +82,8 @@ const ConsultaMedicao = () => {
 
         Object.keys(resp.data).map((k, v) => {
             dicMaquinas.push({
-                key: resp.data[v].codigoCC,
-                value: resp.data[v].codigoCC + " " + resp.data[v].descricaoCC
+                label: resp.data[v].ct,
+                value: resp.data[v].ct
             });
         });
 
@@ -91,7 +100,7 @@ const ConsultaMedicao = () => {
 
         Object.keys(resp.data).map((k, v) => {
             dicMaterial.push({
-                key: resp.data[v].codigoItem,
+                label: resp.data[v].codigoItem,
                 value: resp.data[v].codigoItem
             })
         });
@@ -108,12 +117,30 @@ const ConsultaMedicao = () => {
 
         Object.keys(resp.data).map((k, v) => {
             dicOrdemProducao.push({
-                key: resp.data[v].codigoOp,
+                label: resp.data[v].codigoOp,
                 value: resp.data[v].codigoOp
             });
         });
 
         setDicOrdemProducao(dicOrdemProducao);
+
+    }
+
+    const fillVersaoPadrao = async () => {
+
+        let dicVersaoPadrao = [];
+
+        let resp = await ApiPlanoInspecao.getAllVersaoPlanoPadrao();
+        SecurityConfig.writeLogs(CONSULTAMEDICAO_PREFIX, `Response from ApiPlanoInspecao.getAllVersaoPlanoPadrao(): ${resp?.sucess ? 'Ok' : 'Error'}`);
+
+        Object.keys(resp.data).map((k, v) => {
+            dicVersaoPadrao.push({
+                label: resp.data[v].planoPadraoVersao,
+                value: resp.data[v].planoPadraoVersao
+            })
+        })
+
+        setDicVersaoPadrao(dicVersaoPadrao);
 
     }
 
@@ -124,7 +151,7 @@ const ConsultaMedicao = () => {
         try {
 
             if (currentDescricaoItem == null || currentDescricaoItem == '') {
-                openModal("Aviso", "Item deve ser preenchido para concluir a busca.", true);
+                await swalMessagePopup("Aviso", "Campo 'Material' não pode estar vazio.", '');
                 return;
             }
 
@@ -132,9 +159,10 @@ const ConsultaMedicao = () => {
             await new Promise(r => setTimeout(r, 500));
 
             let dto = {
-                codigoCC: currentCodigoCC,
+                codigoCC: currentCT,
                 descricaoItem: currentDescricaoItem,
                 codigoOperacao: currentCodigoOp,
+                planoPadraoVersao: currentVersaoPP,
                 dataInicio: currentInitialDate != null ? currentInitialDate.toISOString() : null,
                 dataFim: currentFinalDate != null ? currentFinalDate.toISOString() : null
             };
@@ -159,13 +187,15 @@ const ConsultaMedicao = () => {
     }
 
     const cleanData = () => {
-        setCurrentCodigoCC(null);
+        setCurrentCT(null);
         setCurrentDescricaoItem(null);
         setCurrentCodigoOp(null);
+        setCurrentVersaoPP(null);
 
-        document.getElementById("IDMaquina").value = "selectone";
-        document.getElementById("IDMaterial").value = "selectone";
-        document.getElementById("IDOrdemProducao").value = "selectone";
+        refCentroTrabalho.current.select.clearValue();
+        refMaterial.current.select.clearValue();
+        refOrdemProducao.current.select.clearValue();
+        refVersaoPadrao.current.select.clearValue();
     }
 
     const mountMedicaoDetalhada = (row) => {
@@ -181,53 +211,83 @@ const ConsultaMedicao = () => {
 
     const actionformatter = (cell, row) => {
         return (
-            <button className="btn btn-primary" style={{ width: "30%" }} onClick={() => mountMedicaoDetalhada(row)}>
+            <button className="btn btn-primary" style={{ width: "100%" }} onClick={() => mountMedicaoDetalhada(row)}>
                 <i><FontAwesomeIcon icon={faFile} /></i>
             </button>)
     }
 
     const column = [
         {
-            dataField: "codigoCCAndDescricaoCC",
-            text: "Centro de Trabalho",
+            dataField: "ct",
+            text: "Centro Trabalho",
             editable: false,
-            sort: true
+            sort: true,
+            headerStyle: (colum, colIndex) => {
+                return { width: '10%', textAlign: 'center' };
+            }
         },
         {
             dataField: "codigoItem",
-            text: "Item",
+            text: "Material",
             editable: false,
-            sort: true
+            sort: true,
+            headerStyle: (colum, colIndex) => {
+                return { width: '10%', textAlign: 'center' };
+            }
         },
         {
             dataField: "codigoOP",
-            text: "Código Operação",
+            text: "Ordem Produção",
             editable: false,
-            sort: true
+            sort: true,
+            headerStyle: (colum, colIndex) => {
+                return { width: '10%', textAlign: 'center' };
+            }
         },
         {
             dataField: "descricaoItem",
             text: "Descrição",
             editable: false,
-            sort: true
+            sort: true,
+            headerStyle: (colum, colIndex) => {
+                return { width: '7.7%', textAlign: 'center' };
+            }
         },
         {
             dataField: "verPlano",
-            text: "Versão Plano",
+            text: "Versão Item",
             editable: false,
-            sort: true
+            sort: true,
+            headerStyle: (colum, colIndex) => {
+                return { width: '8.5%', textAlign: 'center' };
+            }
+        },
+        {
+            dataField: "planoPadraoVersao",
+            text: "Versão Padrão",
+            editable: false,
+            sort: true,
+            headerStyle: (colum, colIndex) => {
+                return { width: '9%', textAlign: 'center' };
+            }
         },
         {
             dataField: "dataMedicaoShort",
             text: "Data medição",
             editable: false,
-            sort: true
+            sort: true,
+            headerStyle: (colum, colIndex) => {
+                return { width: '10%', textAlign: 'center' };
+            }
         },
         {
             dataField: "IDConsultaDet",
-            text: "Consulta Medições",
+            text: "Detalhes",
             formatter: actionformatter,
-            editable: false
+            editable: false,
+            headerStyle: (colum, colIndex) => {
+                return { width: '5%', textAlign: 'center' };
+            }
         },
     ]
 
@@ -238,7 +298,7 @@ const ConsultaMedicao = () => {
                 <div>
 
                     <div className="cm-title">
-                        <h4>Consulta Medição</h4>
+                        <span>Consulta Medição</span>
                     </div>
 
 
@@ -249,16 +309,13 @@ const ConsultaMedicao = () => {
                             <div className="cm-header">
                                 <div className="cm-header-inputs">
                                     <div className="cm-header-box-select">
-                                        <CustomSelectPicker title="Centro de Trabalho" ID="IDMaquina" dict={dicMaquinas} initWithEmptyValue={true} onChangeEvent={(e) => setCurrentCodigoCC(e.target.value)} />
+                                        <CustomSelectPicker title="Centro de Trabalho" REF={refCentroTrabalho} ID="IDMaquina" dict={dicMaquinas} initWithEmptyValue={true} onChangeEvent={(e) => setCurrentCT(e?.value)} />
                                     </div>
 
                                     <div className="cm-header-box-select">
-                                        <CustomSelectPicker title="Item" ID="IDMaterial" dict={dicMaterial} initWithEmptyValue={true} onChangeEvent={(e) => setCurrentDescricaoItem(e.target.value)} />
+                                        <CustomSelectPicker title="Material" ID="IDMaterial" REF={refMaterial} dict={dicMaterial} onChangeEvent={(e) => setCurrentDescricaoItem(e?.value)} />
                                     </div>
 
-                                    <div className="cm-header-box-select">
-                                        <CustomSelectPicker title="Ordem produção" ID="IDOrdemProducao" dict={dicOrdemProducao} initWithEmptyValue={true} onChangeEvent={(e) => setCurrentCodigoOp(e.target.value)} />
-                                    </div>
 
                                     <div className="cm-header-box-datepicker">
                                         <CustomDatePicker title="Data Início" startdate={initialDate} value={currentInitialDate} onChangeEvent={(date) => setCurrentInitialDate(date != null ? date : null)} />
@@ -267,6 +324,20 @@ const ConsultaMedicao = () => {
                                     <div className="cm-header-box-datepicker">
                                         <CustomDatePicker title="Data Final" startdate={finalDate} value={currentFinalDate} onChangeEvent={(date) => setCurrentFinalDate(date != null ? date : null)} />
                                     </div>
+                                </div>
+
+                                <div className="cm-header-inputs" style={{ marginTop: "20px" }}>
+                                    <div className="cm-header-box-select">
+                                        <CustomSelectPicker title="Ordem produção" REF={refOrdemProducao} ID="IDOrdemProducao" dict={dicOrdemProducao} onChangeEvent={(e) => setCurrentCodigoOp(e?.value)} />
+                                    </div>
+                                    <div className="cm-header-box-select">
+                                        <CustomSelectPicker title="Versão Padrão" REF={refVersaoPadrao} ID="IDVersaoPadrao" dict={dicVersaoPadrao} onChangeEvent={(e) => setCurrentVersaoPP(e?.value)} />
+                                    </div>
+                                </div>
+
+
+                                <div style={{ borderBottom: "1px solid #EBECF1", marginTop: "20px" }}>
+
                                 </div>
 
                                 <div className="cm-header-box-buttons">

@@ -30,6 +30,20 @@ namespace Br.Com.SPI.Jos.Controllers
         }
 
         [HttpPost]
+        [Route("deleteN1")]
+        public IActionResult DeleteMotivoN1([FromServices] DAOFactory dao, [FromBody] MotivoN1 motivo)
+        {
+            if (motivo.ID <= 0)
+            {
+                return this.WriteErrorInfo("Erro ao deletar MotivoN1, ID não pode ser nulo.");
+            }
+
+            var result = dao.InitMotivoN1DAO().Delete(motivo);
+
+            return this.WriteSucess(result);
+        }
+
+        [HttpPost]
         [Route("deleteN2")]
         public IActionResult DeleteMotivoN2([FromServices] DAOFactory dao, [FromBody] MotivoN2 motivo)
         {

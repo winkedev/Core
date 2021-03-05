@@ -4,6 +4,7 @@ import './style.css';
 import CustomTable from '../../components/CustomTable';
 import ReactLoading from 'react-loading';
 import CustomPopup from '../../components/CustomPopup';
+import { swalMessagePopup } from '../../components/SwalPopup';
 
 import { ApiConsultaMedicao } from '../../services/Jost/Api/ConsultaMedicao/Api';
 import { SecurityConfig } from '../../services/SecurityConfig';
@@ -23,12 +24,15 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
 
     const [isLoading, setIsloading] = useState(false);
 
+    const [isShowColumns, setIsShowColumns] = useState(false);
+
     useEffect(async () => {
 
         let dto = {
-            codigoCC: customdata.codigoCC,
+            ct: customdata.ct,
             descricaoItem: customdata.descricaoItem,
             codigoOperacao: customdata.codigoOperacao,
+            planoPadraoVersao: customdata.planoPadraoVersao,
             dataInicio: customdata.dataRI,
             dataFim: customdata.dataRI
         };
@@ -65,7 +69,10 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             SecurityConfig.writeLogs(CONSULTAMEDICAODET_PREFIX, `Response from ApiConsultaMedicao.updateAll(): ${resp?.sucess ? 'Ok' : "Error"}`);
 
             if (resp?.sucess) {
-                openModal("Sucesso", "informações atualizadas com sucesso.", true, false);
+                await swalMessagePopup("Sucesso", "Informação atualizadas com sucesso.", 'success');
+            }
+            else {
+                await swalMessagePopup("Erro", "Falha ao atualizar informações.", 'error');
             }
 
         }
@@ -75,6 +82,17 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
         finally {
             setIsloading(false);
         }
+    }
+
+    const actionformatter = (cell, row) => {
+        return (
+            <div>
+                { row?.justificativa != '' ?
+                    <button className="btn bg-primary-blue" style={{ width: "25px", height: "25px" }} onClick={() => setIsShowColumns(!isShowColumns)} />
+                    : ""
+                }
+            </div>
+        )
     }
 
     const columns = [
@@ -117,7 +135,7 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             editable: false,
             sort: true,
             headerStyle: (colum, colIndex) => {
-                return { width: '7.7%', textAlign: 'center' };
+                return { width: '5%', minWidth: '5%', textAlign: 'center' };
             }
         },
         {
@@ -130,21 +148,12 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             }
         },
         {
-            dataField: "numeroMedicao",
-            text: "N°Med",
-            editable: false,
-            sort: true,
-            headerStyle: (colum, colIndex) => {
-                return { width: '7.7%', textAlign: 'center' };
-            }
-        },
-        {
             dataField: "valorMedido",
             text: "Valor",
             editable: true,
             sort: true,
             headerStyle: (colum, colIndex) => {
-                return { width: '7.7%', textAlign: 'center' };
+                return { width: '5%', textAlign: 'center' };
             }
         },
         {
@@ -161,8 +170,9 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             text: "Justificativa",
             editable: false,
             sort: true,
+            hidden: !isShowColumns,
             headerStyle: (colum, colIndex) => {
-                return { width: '10%', textAlign: 'center' };
+                return { width: '7%', textAlign: 'center' };
             }
         },
         {
@@ -170,6 +180,7 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             text: "RelN",
             editable: false,
             sort: true,
+            hidden: !isShowColumns,
             headerStyle: (colum, colIndex) => {
                 return { width: '7.7%', textAlign: 'center' };
             }
@@ -179,6 +190,7 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             text: "DSV",
             editable: false,
             sort: true,
+            hidden: !isShowColumns,
             headerStyle: (colum, colIndex) => {
                 return { width: '7.7%', textAlign: 'center' };
             }
@@ -189,7 +201,7 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             editable: false,
             sort: true,
             headerStyle: (colum, colIndex) => {
-                return { width: '7.7%', textAlign: 'center' };
+                return { width: '5%', textAlign: 'center' };
             }
         },
         {
@@ -198,8 +210,18 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             editable: false,
             sort: true,
             headerStyle: (colum, colIndex) => {
-                return { width: '7.7%', textAlign: 'center' };
+                return { width: '10%', textAlign: 'center' };
             }
+        },
+        {
+            dataField: "showHiddens",
+            text: "Mot.",
+            editable: false,
+            sort: true,
+            headerStyle: (colum, colIndex) => {
+                return { width: '4%', textAlign: 'center' };
+            },
+            formatter: actionformatter
         },
     ]
 
@@ -211,7 +233,7 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
             <div className="cm-header">
                 <div className="cm-header-inputs">
                     <div className="cm-box-label">
-                        <label>Item</label>
+                        <label>Material</label>
                         <span>{customdata.codigoItem}</span>
                     </div>
                     <div className="cm-box-label">
@@ -219,19 +241,29 @@ const CadastraMedicaoDetalhada = ({ customdata, onBackButtonClick }) => {
                         <span>{customdata.descricaoItem}</span>
                     </div>
                     <div className="cm-box-label">
-                        <label>Plano Medição(Máquina)</label>
-                        <span>{customdata.codigoCCAndDescricaoCC}</span>
+                        <label>Centro Trabalho</label>
+                        <span>{customdata.ct}</span>
                     </div>
                     <div className="cm-box-label">
                         <label>Versão</label>
                         <span>{customdata.verPlano}</span>
                     </div>
+                    <div className="cm-box-label">
+                        <label>Versão Padrão</label>
+                        <span>{customdata.planoPadraoVersao}</span>
+                    </div>
                 </div>
             </div>
 
             <div className="cm-body">
-                <CustomTable tableid="idCadastraMedicaoTable" fieldKey="row" pdfHeaderText="Cadastra Medição" customcolumns={columns} customdata={dic}
+                <CustomTable
+                    tableid="idConsultaMedicaoTable"
+                    fieldKey="row"
+                    pdfHeaderText="Consulta Medição"
+                    customcolumns={columns}
+                    customdata={dic}
                     orientation='l'
+                    isAlternateRowColor
                     validateNewValue={(currentRow, newValue) => {
                         if (currentRow.tipoCaracteristica.toUpperCase().includes("OK/NOK")) {
                             if (newValue.toUpperCase() == "OK" || newValue.toUpperCase() == "NOK") {
