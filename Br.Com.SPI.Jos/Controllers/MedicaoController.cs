@@ -20,6 +20,16 @@ namespace Br.Com.SPI.Jos.Controllers
             return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo("Erro ao recuperar medicoes"); 
         }
 
+        [HttpPost]
+        [Route("getItemReprovadoBy")]
+        [CheckModel]
+        public IActionResult GetItemReprovadoBy([FromServices] DAOFactory dao, [FromBody] DTOMedicao dto)
+        {
+            List<DTOMedicao> list = dao.InitDTOMedicaoDAO().GetItemReprovadoBy(dto.CT, dto.Descricaoitem, dto.CodigoOperacao, dto.PlanoPadraoVersao, dto.DataInicio, dto.DataFim);
+
+            return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo("Erro ao recuperar itens reprovados.");
+        }
+
         [HttpGet]
         [Route("getall")]
         public IActionResult GetAll([FromServices] DAOFactory dao)

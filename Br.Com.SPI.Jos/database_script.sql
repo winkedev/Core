@@ -517,12 +517,55 @@ END CATCH
 
 GO
 
-IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spConsultaMedicaoByGrouped'))
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spConsultaItemReprovadoBy'))
 BEGIN
-	DROP PROCEDURE spConsultaMedicaoByGrouped
+	DROP PROCEDURE spConsultaItemReprovadoBy
 END
 
 GO
+
+CREATE PROCEDURE spConsultaItemReprovadoBy
+(
+@CT VARCHAR(50),
+@DESCITEM VARCHAR(50),
+@CODIGOOP VARCHAR(50),
+@PPVERSAO VARCHAR(50),
+@DATAINICIAL DATETIME,
+@DATAFINAL DATETIME
+)
+AS
+BEGIN TRY
+	
+	SELECT ROW_NUMBER() OVER (ORDER BY PICaract.posicao) AS Row,
+	PICab.Id AS IDPlanoInspecaoCAB, PICaract.ID AS IDPlanoInspecaoCarac, MCab.Id AS IDMedicaoCab, MCaract.id AS IDMedicaoCarac, TM.Id AS IDTipoMedicao, MN1.id AS IDMotivoN1, MN2.id AS IDMotivoN2, OrdemProducao.id AS IDOrdemProducao,
+	PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.CT, PICab.descCC, MCab.dataInicio, MCab.datafim, PICaract.posicao, PICaract.tipo, PICaract.caracteristica, PICaract.class, MCaract.numMedicao, 
+	MCaract.valorMedido, TM.descTipo, MN1.descMotivoN1 + '/' + MN2.descMotivoN2 AS justificativa, MJ.RelatorioDeNaoConformidadeN AS relN, MJ.SolicitacaoDeDesvioDSV AS DSV, MCaract.dataMedicao, dbo.OrdemProducao.codOP, CAST(PICaract.limInf AS VARCHAR(10)) 
+	+ '  - ' + CAST(PICaract.limSup AS VARCHAR(10)) AS limite, MCaract.numMatricula, PICaract.limInf, PICaract.limSup, PICaract.tipoCarac, PICab.planoPadraoVersao
+	FROM     
+	dbo.OrdemProducao RIGHT OUTER JOIN
+	dbo.MedicoesCab AS MCab INNER JOIN
+	dbo.PlanoInspecaoCaract AS PICaract ON MCab.IdPlanoInspecaoCab = PICaract.idPlanoInspecaoCab INNER JOIN
+	dbo.MedicoesCaract AS MCaract ON PICaract.Id = MCaract.idPlanoInspecaoCaract AND MCab.Id = MCaract.idMedicoesCab INNER JOIN
+	dbo.PlanoInspecaoCab AS PICab ON MCab.IdPlanoInspecaoCab = PICab.Id ON dbo.OrdemProducao.id = MCab.idOrdemProducao INNER JOIN
+	dbo.MedicoesJustificativa AS MJ INNER JOIN
+	dbo.MotivosN1 AS MN1 INNER JOIN
+	dbo.MotivosN2 AS MN2 ON MN1.id = MN2.idMotivoN1 ON MJ.idMotivoN2 = MN2.id ON MCaract.Id = MJ.idMedicoesCaract LEFT OUTER JOIN
+	dbo.TipoMedicoes AS TM ON MCaract.idTipoMedicao = TM.Id
+	WHERE 
+	PICab.CT = ISNULL(@CT, PICab.CT) AND 
+	PICab.descItem = ISNULL(@DESCITEM, PICab.descItem) AND 
+	PICab.planoPadraoVersao = ISNULL(@PPVERSAO, PICab.planoPadraoVersao) AND
+	dbo.OrdemProducao.codOP = ISNULL(@CODIGOOP, dbo.OrdemProducao.codOP) AND
+	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
+	CONVERT(DATE, MCab.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MCab.datafim))
+
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
 
 IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spConsultaMedicao'))
 BEGIN

@@ -285,20 +285,18 @@ const CadastroMotivo = () => {
             true,
             () => {
                 return ApiMotivo.deleteN2({ id: row.idN2 }).then(r => {
-                    console.log(r);
                     if (r?.sucess) {
                         return true;
                     }
-                    return false;
+                    else {
+                        return swalMessagePopup("Erro", `Erro ao excluir causa.`, "error");
+                    }
                 });
             }
         )
 
         if (resp.isConfirmed) {
             await consumeMotivosAndFulltable();
-        }
-        else if (resp.isDenied) {
-            await swalMessagePopup("Erro", "Erro ao excluir causa.", "error");
         }
     }
 
@@ -323,12 +321,11 @@ const CadastroMotivo = () => {
             true,
             () => {
                 return ApiMotivo.deleteN1({ id: currentSelectMotivo.id }).then(r => {
-                    console.log(r);
                     if (r?.sucess) {
                         return true;
                     }
                     else {
-                        return swalMessagePopup("Erro", "Erro ao excluir não conforme.", "error");
+                        return swalMessagePopup("Erro", `Erro ao excluir não conforme.`, "error");
                     }
                 });
             }
@@ -472,7 +469,7 @@ const CadastroMotivo = () => {
                         </div>
                     </div>
                     <div className="cadastro-motivo-table">
-                        <CustomTable customcolumns={columnsCausa} customdata={tableData} />
+                        <CustomTable customcolumns={columnsCausa} customdata={tableData} disableExport />
                         <div className="cadastro-motivo-table-buttons" >
                             <button className="btn bg-primary-green color-white cadastro-motivo-table-bt" onClick={cadastrarCausa}><span>Nova causa</span> <PlusSVG width={26} height={26} fill="#FFFFFF" /></button>
                         </div>

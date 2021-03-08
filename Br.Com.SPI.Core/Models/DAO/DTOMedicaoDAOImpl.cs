@@ -49,6 +49,31 @@ namespace Br.Com.SPI.Core.Models.DAO
             return list;
         }
 
+        public List<DTOMedicao> GetItemReprovadoBy(string ct, string descricaoItem, string codigoOP, string planoPadraoVersao, DateTime dataInicial, DateTime dataFinal)
+        {
+            Dictionary<string, object> dic = new Dictionary<string, object>()
+            {
+                { "CT", this.GetValueOrDbNull(ct) },
+                { "DESCITEM", this.GetValueOrDbNull(descricaoItem)},
+                { "CODIGOOP", this.GetValueOrDbNull(codigoOP)},
+                { "PPVERSAO", this.GetValueOrDbNull(planoPadraoVersao)},
+                { "DATAINICIAL", this.GetValueOrDbNull(dataInicial)},
+                { "DATAFINAL", this.GetValueOrDbNull(dataFinal)},
+            };
+
+            List<DTOMedicao> list = new List<DTOMedicao>();
+
+            using (var dt = this.GetDataTable("spConsultaItemReprovadoBy @CT, @DESCITEM, @CODIGOOP, @PPVERSAO, @DATAINICIAL, @DATAFINAL", dic))
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
+            }
+
+            return list;
+        }
+
         public DTOMedicao Delete(DTOMedicao t)
         {
             throw new NotImplementedException();
