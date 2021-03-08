@@ -1,7 +1,7 @@
 ﻿using Br.Com.SPI.Core.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Data;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
@@ -11,11 +11,12 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             List<MotivoN1> list = new List<MotivoN1>();
 
-            var dt = this.GetDataTable("spGetMotivosN1");
-            
-            foreach (DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spGetMotivosN1"))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
 
             return list;
@@ -28,13 +29,13 @@ namespace Br.Com.SPI.Core.Models.DAO
                 { "ID", id }
             };
 
-            var dt = this.GetDataTable("spGetMotivosN1ByID @ID", d);
-
-            foreach(DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spGetMotivosN1ByID @ID", d))
             {
-                return this.ParseToDTO(row);
+                foreach (DataRow row in dt.Rows)
+                {
+                    return this.ParseToDTO(row);
+                }
             }
-            
 
             return null;
         }
@@ -46,39 +47,41 @@ namespace Br.Com.SPI.Core.Models.DAO
                 { "ID", t.ID }
             };
 
-            var dt = this.GetDataTable("spDeleteMotivoN1 @ID", d);
-
-            foreach(DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spDeleteMotivoN1 @ID", d))
             {
-                return t;
+                this.CheckPatternError(dt.Rows);
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    return t;
+                }
             }
-            
 
             return null;
         }
 
         public MotivoN1 SaveUpdate(MotivoN1 t)
         {
-            var dt = this.GetDataTable("spSaveUpdateMotivosN1 @ID, @DESCRICAOMOTIVO, @DATARI", this.ParseToParameters(t));
-            
-            foreach(DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spSaveUpdateMotivosN1 @ID, @DESCRICAOMOTIVO, @DATARI", this.ParseToParameters(t)))
             {
-                Int64 id = row.ParseToInt64("ID");
-                t.ID = id > 0 ? id: t.ID;
-
-                foreach(MotivoN2 m in t?.MotivoN2)
+                foreach (DataRow row in dt.Rows)
                 {
-                    new DAOFactory().InitMotivoN2DAO().SaveUpdate(m);
-                }
+                    Int64 id = row.ParseToInt64("ID");
+                    t.ID = id > 0 ? id : t.ID;
 
-                return t;
+                    foreach (MotivoN2 m in t?.MotivoN2)
+                    {
+                        new DAOFactory().InitMotivoN2DAO().SaveUpdate(m);
+                    }
+
+                    return t;
+                }
             }
-            
 
             return null;
         }
 
-        public MotivoN1 ParseToDTO(DbDataReader row)
+        public MotivoN1 ParseToDTO(DataRow row)
         {
             MotivoN1 m = new MotivoN1();
             m.ID = row.ParseToInt64("id");

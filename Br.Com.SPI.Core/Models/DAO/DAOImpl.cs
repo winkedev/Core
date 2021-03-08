@@ -10,6 +10,9 @@ namespace Br.Com.SPI.Core.Models.DAO
 {
     internal abstract class DAOImpl
     {
+        private const string DEFAULT_ERROR_COLUMN = "Retorno";
+        private const string DEFAULT_ERROR_MESSAGE_COLUMN = "Mensagem";
+
         private DbProviderFactory currentFactory;
 
         private string MountConnection()
@@ -33,7 +36,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             return connection;
         }
 
-        public IEnumerable<DbDataReader> GetDataTable(string query, Dictionary<string, object> dic = null)
+        public DataTable GetDataTable(string query, Dictionary<string, object> dic = null)
         {
             using (DbConnection con = this.OpenConnection())
             {
@@ -55,18 +58,20 @@ namespace Br.Com.SPI.Core.Models.DAO
 
                     using (DbDataReader reader = command.ExecuteReader())
                     {
-                        while (reader.Read())
-                        {
-                            yield return reader;
-                        }
+                        DataTable table = new DataTable();
+                        table.Load(reader, LoadOption.OverwriteChanges);
+                        return table;
                     }
                 }
             }
         }
 
-        public void CheckPatternError(IEnumerable<DbDataReader> rows)
+        public void CheckPatternError(DataRowCollection rows)
         {
-            
+            if (rows?.Count > 0 && !string.IsNullOrEmpty(rows[0].ParseToString(DEFAULT_ERROR_COLUMN)) && !string.IsNullOrEmpty(rows[0].ParseToString(DEFAULT_ERROR_MESSAGE_COLUMN)) )
+            {
+                throw new Exception(rows[0].ParseToString(DEFAULT_ERROR_MESSAGE_COLUMN));
+            }
         }
 
         public bool IsConnected()

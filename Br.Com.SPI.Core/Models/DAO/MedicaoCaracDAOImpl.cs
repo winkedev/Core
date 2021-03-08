@@ -1,8 +1,7 @@
 ﻿using Br.Com.SPI.Core.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Text;
+using System.Data;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
@@ -17,9 +16,12 @@ namespace Br.Com.SPI.Core.Models.DAO
 
             List<MedicaoCaract> list = new List<MedicaoCaract>();
 
-            foreach(DbDataReader row in this.GetDataTable("spGetMedicaoCaracByMedicaoCab @IDMEDICAOCAB", dic))
+            using (DataTable dt = this.GetDataTable("spGetMedicaoCaracByMedicaoCab @IDMEDICAOCAB", dic))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
 
             return list;
@@ -34,9 +36,12 @@ namespace Br.Com.SPI.Core.Models.DAO
 
             List<MedicaoCaract> list = new List<MedicaoCaract>();
 
-            foreach(DbDataReader row in this.GetDataTable("spGetMedicaoCaracByPlanoInspecaoCarac @IDPLANO", dic))
+            using (DataTable dt = this.GetDataTable("spGetMedicaoCaracByPlanoInspecaoCarac @IDPLANO", dic))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
 
             return list;
@@ -50,9 +55,12 @@ namespace Br.Com.SPI.Core.Models.DAO
                 { "VALORMEDIDO", valorMedido },
             };
 
-            foreach (DbDataReader row in this.GetDataTable("spAtualizaValorMedido @ID, @VALORMEDIDO", dic))
+            using (DataTable dt = this.GetDataTable("spAtualizaValorMedido @ID, @VALORMEDIDO", dic))
             {
-                return true;
+                foreach (DataRow row in dt.Rows)
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -63,7 +71,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             throw new NotImplementedException();
         }
 
-        public MedicaoCaract ParseToDTO(DbDataReader row)
+        public MedicaoCaract ParseToDTO(DataRow row)
         {
             MedicaoCaract m = new MedicaoCaract();
             m.ID = row.ParseToInt64("Id");

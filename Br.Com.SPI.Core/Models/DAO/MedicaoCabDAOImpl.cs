@@ -1,8 +1,7 @@
 ﻿using Br.Com.SPI.Core.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Text;
+using System.Data;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
@@ -22,15 +21,18 @@ namespace Br.Com.SPI.Core.Models.DAO
 
             List<MedicaoCab> list = new List<MedicaoCab>();
 
-            foreach(DbDataReader row in this.GetDataTable("spGetMedicaoCabByPlanoInspecaoCab @IDCAB", dic))
+            using (DataTable dt = this.GetDataTable("spGetMedicaoCabByPlanoInspecaoCab @IDCAB", dic))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
 
             return list;
         }
 
-        public MedicaoCab ParseToDTO(DbDataReader row)
+        public MedicaoCab ParseToDTO(DataRow row)
         {
             MedicaoCab m = new MedicaoCab();
             m.ID = row.ParseToInt64("Id");

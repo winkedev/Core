@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 
 namespace Br.Com.SPI.Core.Extensions
 {
     public static class Parse
     {
-        public static Int64 ParseToInt64(this DbDataReader row, string name)
+        public static Int64 ParseToInt64(this DataRow row, string name)
         {
             try
             {
@@ -17,7 +18,7 @@ namespace Br.Com.SPI.Core.Extensions
             }
         }
 
-        public static Int32 ParseToInt(this DbDataReader row, string name)
+        public static Int32 ParseToInt(this DataRow row, string name)
         {
             try
             {
@@ -29,7 +30,7 @@ namespace Br.Com.SPI.Core.Extensions
             }
         }
 
-        public static decimal ParseToDecimal(this DbDataReader row, string name)
+        public static decimal ParseToDecimal(this DataRow row, string name)
         {
             try
             {
@@ -41,7 +42,7 @@ namespace Br.Com.SPI.Core.Extensions
             }
         }
 
-        public static DateTime ParseToDatetime(this DbDataReader row, string name)
+        public static DateTime ParseToDatetime(this DataRow row, string name)
         {
             try
             {
@@ -53,7 +54,7 @@ namespace Br.Com.SPI.Core.Extensions
             }
         }
 
-        public static String ParseToString(this DbDataReader row, string name)
+        public static String ParseToString(this DataRow row, string name)
         {
             try
             {

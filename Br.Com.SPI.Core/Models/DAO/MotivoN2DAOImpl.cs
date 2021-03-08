@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
+using System.Data;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
@@ -24,17 +22,18 @@ namespace Br.Com.SPI.Core.Models.DAO
 
             ObservableCollection<MotivoN2> list = new ObservableCollection<MotivoN2>();
 
-            var dt = this.GetDataTable("spGetMotivosN2ByIDMotivoN1 @ID", dic);
-
-            foreach(DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spGetMotivosN2ByIDMotivoN1 @ID", dic))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
 
             return list;
         }
 
-        public MotivoN2 ParseToDTO(DbDataReader row)
+        public MotivoN2 ParseToDTO(DataRow row)
         {
             MotivoN2 m = new MotivoN2();
             m.ID = row.ParseToInt64("id");
@@ -56,12 +55,13 @@ namespace Br.Com.SPI.Core.Models.DAO
 
         public MotivoN2 SaveUpdate(MotivoN2 t)
         {
-            var dt = this.GetDataTable("spSaveUpdateMotivosN2 @ID, @IDN1, @DESCRICAO, @DATARI", this.ParseToParameters(t));
-
-            foreach (DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spSaveUpdateMotivosN2 @ID, @IDN1, @DESCRICAO, @DATARI", this.ParseToParameters(t)))
             {
-                t.ID = row.ParseToInt64("id");
-                return t;
+                foreach (DataRow row in dt.Rows)
+                {
+                    t.ID = row.ParseToInt64("id");
+                    return t;
+                }
             }
 
             return null;
@@ -74,14 +74,15 @@ namespace Br.Com.SPI.Core.Models.DAO
                 { "ID", t.ID }
             };
 
-            var dt = this.GetDataTable("spDeleteMotivoN2 @ID", dic);
-
-            foreach(DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spDeleteMotivoN2 @ID", dic))
             {
-                var retoro = row.ParseToString("Retorno");
-                return t;
-            }
+                this.CheckPatternError(dt.Rows);
 
+                foreach (DataRow row in dt.Rows)
+                {
+                    return t;
+                }
+            }
             return null;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using Br.Com.SPI.Core.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Data;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
@@ -11,9 +11,12 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             List<OrdemProducao> list = new List<OrdemProducao>();
 
-            foreach (DbDataReader row in this.GetDataTable("spGetOrdemProducao"))
+            using (DataTable dt = this.GetDataTable("spGetOrdemProducao"))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
 
             return list;
@@ -28,9 +31,12 @@ namespace Br.Com.SPI.Core.Models.DAO
 
             List<OrdemProducao> list = new List<OrdemProducao>();
 
-            foreach (DbDataReader row in this.GetDataTable("spGetOrdemProducaoByID @ID", dic))
+            using (DataTable dt = this.GetDataTable("spGetOrdemProducaoByID @ID", dic))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
 
             return list;
@@ -41,7 +47,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             throw new NotImplementedException();
         }
 
-        public OrdemProducao ParseToDTO(DbDataReader row)
+        public OrdemProducao ParseToDTO(DataRow row)
         {
             OrdemProducao o = new OrdemProducao();
             o.CodigoOp = row.ParseToString("codOP");

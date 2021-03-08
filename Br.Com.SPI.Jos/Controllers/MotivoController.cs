@@ -2,6 +2,7 @@
 using Br.Com.SPI.Core.Models.DAO;
 using Br.Com.SPI.Jos.Utils;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 
 namespace Br.Com.SPI.Jos.Controllers
@@ -38,9 +39,17 @@ namespace Br.Com.SPI.Jos.Controllers
                 return this.WriteErrorInfo("Erro ao deletar MotivoN1, ID não pode ser nulo.");
             }
 
-            var result = dao.InitMotivoN1DAO().Delete(motivo);
+            try
+            {
+                var result = dao.InitMotivoN1DAO().Delete(motivo);
 
-            return this.WriteSucess(result);
+                return this.WriteSucess(result);
+            }
+            catch (Exception ex)
+            {
+                return this.WriteErrorInfo(ex?.Message);
+            }
+            
         }
 
         [HttpPost]
@@ -52,9 +61,17 @@ namespace Br.Com.SPI.Jos.Controllers
                 return this.WriteErrorInfo("Erro ao deletar MotivoN2, ID não pode ser nulo.");
             }
 
-            var result = dao.InitMotivoN2DAO().Delete(motivo);
+            try
+            {
+                var result = dao.InitMotivoN2DAO().Delete(motivo);
 
-            return this.WriteSucess(result);
+                return this.WriteSucess(result);
+            }
+            catch (Exception ex)
+            {
+                return this.WriteErrorInfo(ex?.Message);
+            }
+            
         }
 
     }

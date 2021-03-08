@@ -2,7 +2,7 @@
 using Br.Com.SPI.Core.Models.DTO;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace Br.Com.SPI.Core.Models.DAO
@@ -12,13 +12,15 @@ namespace Br.Com.SPI.Core.Models.DAO
         public List<DTOMedicao> GetAll()
         {
             List<DTOMedicao> list = new List<DTOMedicao>();
-            var dt = this.GetDataTable("spConsultaMedicao");
-
-            foreach(DbDataReader row in dt)
-            {
-                list.Add(this.ParseToDTO(row));
-            }
             
+            using (DataTable dt = this.GetDataTable("spConsultaMedicao"))
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
+            }
+
             return list;
         }
 
@@ -35,13 +37,14 @@ namespace Br.Com.SPI.Core.Models.DAO
             };
 
             List<DTOMedicao> list = new List<DTOMedicao>();
-            var dt = this.GetDataTable("spConsultaMedicaoBy @CT, @DESCITEM, @CODIGOOP, @PPVERSAO, @DATAINICIAL, @DATAFINAL", dic);
-            
-            foreach(DbDataReader row in dt)
+
+            using (var dt = this.GetDataTable("spConsultaMedicaoBy @CT, @DESCITEM, @CODIGOOP, @PPVERSAO, @DATAINICIAL, @DATAFINAL", dic))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
-            
 
             return list;
         }
@@ -51,7 +54,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             throw new NotImplementedException();
         }
 
-        public DTOMedicao ParseToDTO(DbDataReader row)
+        public DTOMedicao ParseToDTO(DataRow row)
         {
             DTOMedicao dto = new DTOMedicao();
             dto.Row = row.ParseToInt64("row");

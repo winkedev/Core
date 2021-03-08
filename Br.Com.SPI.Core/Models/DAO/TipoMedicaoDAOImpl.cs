@@ -1,8 +1,7 @@
 ﻿using Br.Com.SPI.Core.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Text;
+using System.Data;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
@@ -15,9 +14,12 @@ namespace Br.Com.SPI.Core.Models.DAO
                 { "ID", id }
             };
 
-            foreach(DbDataReader row in this.GetDataTable("spGetTipoMedicaoByID @ID", dic))
+            using (DataTable dt = this.GetDataTable("spGetTipoMedicaoByID @ID", dic))
             {
-                return this.ParseToDTO(row);
+                foreach (DataRow row in dt.Rows)
+                {
+                    return this.ParseToDTO(row);
+                }
             }
 
             return null;
@@ -28,7 +30,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             throw new NotImplementedException();
         }
 
-        public TipoMedicao ParseToDTO(DbDataReader row)
+        public TipoMedicao ParseToDTO(DataRow row)
         {
             TipoMedicao t = new TipoMedicao();
             t.ID = row.ParseToInt64("Id");

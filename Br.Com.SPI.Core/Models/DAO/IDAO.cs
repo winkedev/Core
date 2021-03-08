@@ -21,11 +21,11 @@ namespace Br.Com.SPI.Core.Models.DAO
         T Delete(T t);
 
         /// <summary>
-        /// Parse <see cref="DbDataReader"/> to <see cref="T"/>
+        /// Parse <see cref="DataRow"/> to <see cref="T"/>
         /// </summary>
         /// <param name="row"></param>
         /// <returns></returns>
-        T ParseToDTO(DbDataReader row);
+        T ParseToDTO(DataRow row);
 
         /// <summary>
         /// Parse <see cref="T"/> to <see cref="Dictionary{TKey, TValue}"/>

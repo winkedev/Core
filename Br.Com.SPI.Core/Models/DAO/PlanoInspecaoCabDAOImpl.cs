@@ -2,7 +2,7 @@
 using Br.Com.SPI.Core.Models.DTO;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Data;
 
 namespace Br.Com.SPI.Core.Models.DAO
 {
@@ -12,13 +12,13 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
 
-            var dt = this.GetDataTable("spGetPlanoInspecaoCab");
-            
-            foreach(DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spGetPlanoInspecaoCab"))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
-            
 
             return list;
         }
@@ -27,13 +27,13 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
 
-            var dt = this.GetDataTable("spGetPlanoInspecaoCabCodigoCC");
-
-            foreach (DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spGetPlanoInspecaoCabCodigoCC"))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
-
 
             return list;
         }
@@ -42,13 +42,13 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
 
-            var dt = this.GetDataTable("spGetPlanoInspecaoCabCodigoItem");
-
-            foreach (DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spGetPlanoInspecaoCabCodigoItem"))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
-
 
             return list;
         }
@@ -57,11 +57,12 @@ namespace Br.Com.SPI.Core.Models.DAO
         {
             List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
 
-            var dt = this.GetDataTable("spGetPlanoInspecaoCabVersaoPlanoPadrao");
-
-            foreach(DbDataReader row in dt)
+            using (DataTable dt = this.GetDataTable("spGetPlanoInspecaoCabVersaoPlanoPadrao"))
             {
-                list.Add(this.ParseToDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
             }
 
             return list;
@@ -81,9 +82,12 @@ namespace Br.Com.SPI.Core.Models.DAO
 
             List<DTOPlanoInspecao> list = new List<DTOPlanoInspecao>();
 
-            foreach(DbDataReader row in this.GetDataTable("spGetPlanoInspecaoCabBy @CT, @DESCRICAOITEM, @CODIGOOP, @PPVERSAO, @DATAINICIAL, @DATAFINAL", dic))
+            using (DataTable dt = this.GetDataTable("spGetPlanoInspecaoCabBy @CT, @DESCRICAOITEM, @CODIGOOP, @PPVERSAO, @DATAINICIAL, @DATAFINAL", dic))
             {
-                list.Add(this.ParseToSimpleDTO(row));
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToSimpleDTO(row));
+                }
             }
 
             return list;
@@ -94,7 +98,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             throw new NotImplementedException();
         }
 
-        public PlanoInspecaoCab ParseToDTO(DbDataReader row)
+        public PlanoInspecaoCab ParseToDTO(DataRow row)
         {
             PlanoInspecaoCab p = new PlanoInspecaoCab();
             p.ID = row.ParseToInt64("Id");
@@ -123,7 +127,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             return p;
         }
 
-        public DTOPlanoInspecao ParseToSimpleDTO(DbDataReader row)
+        public DTOPlanoInspecao ParseToSimpleDTO(DataRow row)
         {
             DTOPlanoInspecao p = new DTOPlanoInspecao();
             p.ID = row.ParseToInt64("Id");
