@@ -1,1 +1,1 @@
-# JostFrontReact
+# Core

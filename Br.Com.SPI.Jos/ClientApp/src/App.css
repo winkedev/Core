@@ -1,0 +1,44 @@
+:root{
+  --primary-green: #18CE0F;
+  --primary-orange: #FFB236;
+  --primary-red: #FF4D4D;
+  --primary-dark: #000000;
+  --primary-gray: #EBECF1;
+  --primary-white: #FFFFFF;
+  --primary-darkblue: #007BFF;
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html, #root, #root > div{
+  font-family: 'Roboto', sans-serif; 
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bg-primary-green{
+  background-color: var(--primary-green) !important;
+}
+
+.bg-primary-red{
+  background-color: var(--primary-red) !important;
+}
+
+.bg-primary-orange{
+  background-color: var(--primary-orange) !important;
+}
+
+.bg-primary-blue{
+  background-color: var(--primary-darkblue) !important;
+}
+
+.border-none{
+  border: none;
+}
+
+.color-white{
+  color: var(--primary-white) !important;
+}
