@@ -679,9 +679,9 @@ CREATE PROCEDURE spGetPlanoInspecaoCabBy
 )
 AS
 BEGIN TRY
-	SELECT PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, PICab.dataRI, PICab.CT, PICab.planoPadraoVersao, OrdemProd.codOP
+	SELECT PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, MCab.dataRI, PICab.CT, PICab.planoPadraoVersao, OrdemProd.codOP
 	FROM PlanoInspecaoCab PICab 
-	LEFT JOIN MedicoesCab MCab ON PICab.Id = MCab.IdPlanoInspecaoCab
+	INNER JOIN MedicoesCab MCab ON PICab.Id = MCab.IdPlanoInspecaoCab
 	LEFT JOIN OrdemProducao OrdemProd ON MCab.idOrdemProducao = OrdemProd.id
 	WHERE 
 	PICab.CT = ISNULL(@CT, PICab.CT) AND 
@@ -690,7 +690,7 @@ BEGIN TRY
 	PICab.planoPadraoVersao = ISNULL(@PPVERSAO, PICab.planoPadraoVersao) AND
 	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
 	CONVERT(DATE, MCab.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MCab.datafim))
-	GROUP BY PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, PICab.dataRI, PICab.CT, PICab.planoPadraoVersao, OrdemProd.codOP
+	GROUP BY PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, MCab.dataRI, PICab.CT, PICab.planoPadraoVersao, OrdemProd.codOP
 
 END TRY
 BEGIN CATCH

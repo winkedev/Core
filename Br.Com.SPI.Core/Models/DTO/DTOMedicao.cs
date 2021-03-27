@@ -37,7 +37,6 @@ namespace Br.Com.SPI.Core.Models.DTO
         [XmlElement("CodigoItem"), JsonPropertyName("codigoItem")]
         public string CodigoItem { get; set; }
 
-        [Required(ErrorMessage = "DescricaoItem não pode ser nulo.")]
         [XmlElement("DescricaoItem"), JsonPropertyName("descricaoItem")]
         public string Descricaoitem { get; set; }
 
