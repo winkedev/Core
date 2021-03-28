@@ -47,7 +47,16 @@ namespace Br.Com.SPI.Jos.Controllers
         {
             List<PlanoInspecaoCab> list = dao.InitPlanoInspecaoCabDAO().GetAllVersaoPlanoPadrao();
 
-            return list != null && list.Any() ? this.WriteSucess(list, "Dados recuperados copm sucesso.") : this.WriteErrorInfo(DEFAULT_ERROR_MESSAGE);
+            return list != null && list.Any() ? this.WriteSucess(list, "Dados recuperados com sucesso.") : this.WriteErrorInfo(DEFAULT_ERROR_MESSAGE);
+        }
+
+        [HttpGet]
+        [Route("getallplanopadrao")]
+        public IActionResult GetAllPlanoPadrao([FromServices] DAOFactory dao)
+        {
+            List<PlanoInspecaoCab> list = dao.InitPlanoInspecaoCabDAO().GetAllPlanoPadrao();
+
+            return list != null && list.Any() ? this.WriteSucess(list, "Dados recuperados com sucesso.") : this.WriteErrorInfo(DEFAULT_ERROR_MESSAGE);
         }
 
         [HttpPost]
@@ -55,7 +64,7 @@ namespace Br.Com.SPI.Jos.Controllers
         [CheckModel]
         public IActionResult GetPlanoInspecaoBy([FromServices] DAOFactory dao, [FromBody] DTOMedicao dto)
         {
-            List<DTOPlanoInspecao> list = dao.InitPlanoInspecaoCabDAO().GetPlanoInspecaoCabBy(dto.CT, dto.Descricaoitem, dto.CodigoOperacao, dto.PlanoPadraoVersao, dto.DataInicio, dto.DataFim);
+            List<DTOPlanoInspecao> list = dao.InitPlanoInspecaoCabDAO().GetPlanoInspecaoCabBy(dto.CT, dto.CodigoItem, dto.CodigoOperacao, dto.PlanoPadraoVersao, dto.PlanoPadrao, dto.DataInicio, dto.DataFim);
 
             return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo(DEFAULT_ERROR_MESSAGE);
         }

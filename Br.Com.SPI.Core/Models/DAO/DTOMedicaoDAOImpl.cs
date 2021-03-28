@@ -24,21 +24,22 @@ namespace Br.Com.SPI.Core.Models.DAO
             return list;
         }
 
-        public List<DTOMedicao> GetMedicaoBy(string ct, string descricaoItem, string codigoOP, string planoPadraoVersao, DateTime dataInicial, DateTime dataFinal)
+        public List<DTOMedicao> GetMedicaoBy(string ct, string codigoItem, string codigoOP, string planoPadraoVersao, string planoPadrao, DateTime dataInicial, DateTime dataFinal)
         {
             Dictionary<string, object> dic = new Dictionary<string, object>()
             {
                 { "CT", this.GetValueOrDbNull(ct) },
-                { "DESCITEM", this.GetValueOrDbNull(descricaoItem)},
+                { "CODIGOITEM", this.GetValueOrDbNull(codigoItem)},
                 { "CODIGOOP", this.GetValueOrDbNull(codigoOP)},
                 { "PPVERSAO", this.GetValueOrDbNull(planoPadraoVersao)},
+                { "PP", this.GetValueOrDbNull(planoPadrao)},
                 { "DATAINICIAL", this.GetValueOrDbNull(dataInicial)},
                 { "DATAFINAL", this.GetValueOrDbNull(dataFinal)},
             };
 
             List<DTOMedicao> list = new List<DTOMedicao>();
 
-            using (var dt = this.GetDataTable("spConsultaMedicaoBy @CT, @DESCITEM, @CODIGOOP, @PPVERSAO, @DATAINICIAL, @DATAFINAL", dic))
+            using (var dt = this.GetDataTable("spConsultaMedicaoBy @CT, @CODIGOITEM, @CODIGOOP, @PPVERSAO, @PP, @DATAINICIAL, @DATAFINAL", dic))
             {
                 foreach (DataRow row in dt.Rows)
                 {
@@ -49,21 +50,22 @@ namespace Br.Com.SPI.Core.Models.DAO
             return list;
         }
 
-        public List<DTOMedicao> GetItemReprovadoBy(string ct, string descricaoItem, string codigoOP, string planoPadraoVersao, DateTime dataInicial, DateTime dataFinal)
+        public List<DTOMedicao> GetItemReprovadoBy(string ct, string codigoItem, string codigoOP, string planoPadraoVersao, string planoPadrao, DateTime dataInicial, DateTime dataFinal)
         {
             Dictionary<string, object> dic = new Dictionary<string, object>()
             {
                 { "CT", this.GetValueOrDbNull(ct) },
-                { "DESCITEM", this.GetValueOrDbNull(descricaoItem)},
+                { "CODIGOITEM", this.GetValueOrDbNull(codigoItem)},
                 { "CODIGOOP", this.GetValueOrDbNull(codigoOP)},
                 { "PPVERSAO", this.GetValueOrDbNull(planoPadraoVersao)},
+                { "PP", this.GetValueOrDbNull(planoPadrao) },
                 { "DATAINICIAL", this.GetValueOrDbNull(dataInicial)},
                 { "DATAFINAL", this.GetValueOrDbNull(dataFinal)},
             };
 
             List<DTOMedicao> list = new List<DTOMedicao>();
 
-            using (var dt = this.GetDataTable("spConsultaItemReprovadoBy @CT, @DESCITEM, @CODIGOOP, @PPVERSAO, @DATAINICIAL, @DATAFINAL", dic))
+            using (var dt = this.GetDataTable("spConsultaItemReprovadoBy @CT, @CODIGOITEM, @CODIGOOP, @PPVERSAO, @PP, @DATAINICIAL, @DATAFINAL", dic))
             {
                 foreach (DataRow row in dt.Rows)
                 {
@@ -87,6 +89,7 @@ namespace Br.Com.SPI.Core.Models.DAO
             dto.Descricaoitem = row.ParseToString("descItem");
             dto.VerPlano = row.ParseToString("verPlano");
             dto.PlanoPadraoVersao = row.ParseToString("planoPadraoVersao");
+            dto.PlanoPadrao = row.ParseToString("planoPadrao");
             dto.CodigoCC = row.ParseToString("codCC");
             dto.CT = row.ParseToString("ct");
             dto.DescricaoCC = row.ParseToString("descCC");

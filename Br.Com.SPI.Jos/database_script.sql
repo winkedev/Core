@@ -478,9 +478,10 @@ GO
 CREATE PROCEDURE spConsultaMedicaoBy
 (
 @CT VARCHAR(50),
-@DESCITEM VARCHAR(50),
+@CODIGOITEM VARCHAR(50),
 @CODIGOOP VARCHAR(50),
 @PPVERSAO VARCHAR(50),
+@PP VARCHAR(50),
 @DATAINICIAL DATETIME,
 @DATAFINAL DATETIME
 )
@@ -504,11 +505,10 @@ BEGIN TRY
 	dbo.TipoMedicoes AS TM ON MCaract.idTipoMedicao = TM.Id
 	WHERE 
 	PICab.CT = ISNULL(@CT, PICab.CT) AND 
-	PICab.descItem = ISNULL(@DESCITEM, PICab.descItem) AND 
+	PICab.codItem = ISNULL(@CODIGOITEM, PICab.codItem) AND 
 	PICab.planoPadraoVersao = ISNULL(@PPVERSAO, PICab.planoPadraoVersao) AND
-	dbo.OrdemProducao.codOP = ISNULL(@CODIGOOP, dbo.OrdemProducao.codOP) AND
-	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
-	CONVERT(DATE, MCab.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MCab.datafim))
+	PICab.planoPadrao = ISNULL(@PP, PICab.planoPadrao) AND
+	dbo.OrdemProducao.codOP = ISNULL(@CODIGOOP, dbo.OrdemProducao.codOP)
 
 END TRY
 BEGIN CATCH
@@ -527,9 +527,10 @@ GO
 CREATE PROCEDURE spConsultaItemReprovadoBy
 (
 @CT VARCHAR(50),
-@DESCITEM VARCHAR(50),
+@CODIGOITEM VARCHAR(50),
 @CODIGOOP VARCHAR(50),
 @PPVERSAO VARCHAR(50),
+@PP VARCHAR(50),
 @DATAINICIAL DATETIME,
 @DATAFINAL DATETIME
 )
@@ -553,11 +554,10 @@ BEGIN TRY
 	dbo.TipoMedicoes AS TM ON MCaract.idTipoMedicao = TM.Id
 	WHERE 
 	PICab.CT = ISNULL(@CT, PICab.CT) AND 
-	PICab.descItem = ISNULL(@DESCITEM, PICab.descItem) AND 
+	PICab.codItem = ISNULL(@CODIGOITEM, PICab.codItem) AND 
 	PICab.planoPadraoVersao = ISNULL(@PPVERSAO, PICab.planoPadraoVersao) AND
-	dbo.OrdemProducao.codOP = ISNULL(@CODIGOOP, dbo.OrdemProducao.codOP) AND
-	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
-	CONVERT(DATE, MCab.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MCab.datafim))
+	PICab.planoPadrao = ISNULL(@PP, PICab.planoPadrao) AND
+	dbo.OrdemProducao.codOP = ISNULL(@CODIGOOP, dbo.OrdemProducao.codOP)
 
 END TRY
 BEGIN CATCH
@@ -661,6 +661,24 @@ END CATCH
 
 GO
 
+IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoCabPlanoPadrao'))
+BEGIN
+	DROP PROCEDURE spGetPlanoInspecaoCabPlanoPadrao
+END
+
+GO
+
+CREATE PROCEDURE spGetPlanoInspecaoCabPlanoPadrao
+AS
+BEGIN TRY
+	SELECT planoPadrao FROM PlanoInspecaoCab GROUP BY planoPadrao
+END TRY
+BEGIN CATCH
+	SELECT 0 AS Retorno, ERROR_MESSAGE() AS Mensagem
+END CATCH
+
+GO
+
 IF EXISTS(SELECT * FROM sys.procedures WHERE OBJECT_ID = object_id('spGetPlanoInspecaoCabBy'))
 BEGIN
 	DROP PROCEDURE spGetPlanoInspecaoCabBy
@@ -674,6 +692,7 @@ CREATE PROCEDURE spGetPlanoInspecaoCabBy
 @CODIGOITEM VARCHAR(50),
 @CODIGOOP VARCHAR(50),
 @PPVERSAO VARCHAR(50),
+@PP VARCHAR(50),
 @DATAINICIAL DATETIME,
 @DATAFINAL DATETIME
 )
@@ -688,6 +707,7 @@ BEGIN TRY
 	PICab.codItem = ISNULL(@CODIGOITEM, PICab.codItem) AND 
 	OrdemProd.codOP = ISNULL(@CODIGOOP, OrdemProd.codOP) AND
 	PICab.planoPadraoVersao = ISNULL(@PPVERSAO, PICab.planoPadraoVersao) AND
+	PIcab.planoPadrao = ISNULL(@PP, PICab.planoPadrao) AND
 	CONVERT(DATE, MCab.dataInicio) >= CONVERT(DATE, ISNULL(@DATAINICIAL, MCab.dataInicio)) AND
 	CONVERT(DATE, MCab.datafim) <= CONVERT(DATE, ISNULL(@DATAFINAL, MCab.datafim))
 	GROUP BY PICab.ID, PICab.codItem, PICab.descItem, PICab.verPlano, PICab.codCC, PICab.planoPadrao, MCab.dataRI, PICab.CT, PICab.planoPadraoVersao, OrdemProd.codOP

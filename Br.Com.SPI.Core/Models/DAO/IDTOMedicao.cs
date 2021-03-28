@@ -21,7 +21,7 @@ namespace Br.Com.SPI.Core.Models.DAO
         /// <param name="dataFinal"></param>
         /// <param name="codigoOP"></param>
         /// <returns></returns>
-        List<DTOMedicao> GetMedicaoBy(string ct, string descricaoItem, string codigoOP, string planoPadraoVersao, DateTime dataInicial, DateTime dataFinal);
+        List<DTOMedicao> GetMedicaoBy(string ct, string codigoItem, string codigoOP, string planoPadraoVersao, string planoPadrao, DateTime dataInicial, DateTime dataFinal);
 
         /// <summary>
         /// Get item reprovado by:
@@ -33,7 +33,7 @@ namespace Br.Com.SPI.Core.Models.DAO
         /// <param name="dataInicial"></param>
         /// <param name="dataFinal"></param>
         /// <returns></returns>
-        List<DTOMedicao> GetItemReprovadoBy(string ct, string descricaoItem, string codigoOP, string planoPadraoVersao, DateTime dataInicial, DateTime dataFinal);
+        List<DTOMedicao> GetItemReprovadoBy(string ct, string codigoItem, string codigoOP, string planoPadraoVersao, string planoPadrao, DateTime dataInicial, DateTime dataFinal);
 
         bool UpdateAll(List<DTOMedicao> list);
     }

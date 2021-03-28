@@ -15,7 +15,7 @@ namespace Br.Com.SPI.Jos.Controllers
         [CheckModel]
         public IActionResult GetMedicaoBy([FromServices] DAOFactory dao, [FromBody] DTOMedicao dto)
         {
-            List<DTOMedicao> list = dao.InitDTOMedicaoDAO().GetMedicaoBy(dto.CT, dto.Descricaoitem, dto.CodigoOperacao, dto.PlanoPadraoVersao, dto.DataInicio, dto.DataFim);
+            List<DTOMedicao> list = dao.InitDTOMedicaoDAO().GetMedicaoBy(dto.CT, dto.CodigoItem, dto.CodigoOperacao, dto.PlanoPadraoVersao, dto.PlanoPadrao, dto.DataInicio, dto.DataFim);
 
             return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo("Erro ao recuperar medicoes"); 
         }
@@ -25,7 +25,7 @@ namespace Br.Com.SPI.Jos.Controllers
         [CheckModel]
         public IActionResult GetItemReprovadoBy([FromServices] DAOFactory dao, [FromBody] DTOMedicao dto)
         {
-            List<DTOMedicao> list = dao.InitDTOMedicaoDAO().GetItemReprovadoBy(dto.CT, dto.Descricaoitem, dto.CodigoOperacao, dto.PlanoPadraoVersao, dto.DataInicio, dto.DataFim);
+            List<DTOMedicao> list = dao.InitDTOMedicaoDAO().GetItemReprovadoBy(dto.CT, dto.CodigoItem, dto.CodigoOperacao, dto.PlanoPadraoVersao, dto.PlanoPadrao, dto.DataInicio, dto.DataFim);
 
             return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo("Erro ao recuperar itens reprovados.");
         }

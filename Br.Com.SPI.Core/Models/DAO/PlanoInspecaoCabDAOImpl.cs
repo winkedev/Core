@@ -68,21 +68,37 @@ namespace Br.Com.SPI.Core.Models.DAO
             return list;
         }
 
-        public List<DTOPlanoInspecao> GetPlanoInspecaoCabBy(string ct, string descricaoItem, string codigoOP, string planoPadraoVersao, DateTime dataInicial, DateTime dataFinal)
+        public List<PlanoInspecaoCab> GetAllPlanoPadrao()
+        {
+            List<PlanoInspecaoCab> list = new List<PlanoInspecaoCab>();
+
+            using (DataTable dt = this.GetDataTable("spGetPlanoInspecaoCabPlanoPadrao"))
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(this.ParseToDTO(row));
+                }
+            }
+
+            return list;
+        }
+
+        public List<DTOPlanoInspecao> GetPlanoInspecaoCabBy(string ct, string codigoItem, string codigoOP, string planoPadraoVersao, string planoPadrao, DateTime dataInicial, DateTime dataFinal)
         {
             Dictionary<string, object> dic = new Dictionary<string, object>()
             {
                 { "CT", this.GetValueOrDbNull(ct) },
-                { "DESCRICAOITEM", this.GetValueOrDbNull(descricaoItem) },
+                { "CODIGOITEM", this.GetValueOrDbNull(codigoItem) },
                 { "CODIGOOP", this.GetValueOrDbNull(codigoOP) },
                 { "PPVERSAO", this.GetValueOrDbNull(planoPadraoVersao) },
+                { "PP", this.GetValueOrDbNull(planoPadrao)},
                 { "DATAINICIAL", this.GetValueOrDbNull(dataInicial) },
                 { "DATAFINAL", this.GetValueOrDbNull(dataFinal) }
             };
 
             List<DTOPlanoInspecao> list = new List<DTOPlanoInspecao>();
 
-            using (DataTable dt = this.GetDataTable("spGetPlanoInspecaoCabBy @CT, @DESCRICAOITEM, @CODIGOOP, @PPVERSAO, @DATAINICIAL, @DATAFINAL", dic))
+            using (DataTable dt = this.GetDataTable("spGetPlanoInspecaoCabBy @CT, @CODIGOITEM, @CODIGOOP, @PPVERSAO, @PP, @DATAINICIAL, @DATAFINAL", dic))
             {
                 foreach (DataRow row in dt.Rows)
                 {

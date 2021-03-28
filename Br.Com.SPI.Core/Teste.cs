@@ -17,6 +17,15 @@ namespace Br.Com.SPI.Core
             });
         }
 
+        public Task<string> Get2Base64StringAsync()
+        {
+            return Task.Run(() =>
+            {
+                byte[] b = File.ReadAllBytes(@"D:\Analise\pdf2.pdf");
+                return Convert.ToBase64String(b);
+            });
+        }
+
         public Task<string> GetBase64String()
         {
             return Task.Run(() =>
