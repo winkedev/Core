@@ -17,5 +17,7 @@ namespace Br.Com.SPI.Core.Models.DAO
         List<PlanoInspecaoCab> GetAllPlanoPadrao();
 
         List<DTOPlanoInspecao> GetPlanoInspecaoCabBy(string ct, string codigoItem, string codigoOP, string planoPadraoVersao, string planoPadrao, DateTime dataInicial, DateTime dataFinal);
+
+        List<DTOPlanoInspecao> GetPlanoInspecaoCabReprovadoBy(string ct, string codigoItem, string codigoOP, string planoPadraoVersao, string planoPadrao, DateTime dataInicial, DateTime dataFinal);
     }
 }

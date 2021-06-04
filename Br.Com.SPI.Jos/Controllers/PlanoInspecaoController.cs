@@ -68,5 +68,15 @@ namespace Br.Com.SPI.Jos.Controllers
 
             return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo(DEFAULT_ERROR_MESSAGE);
         }
+
+        [HttpPost]
+        [Route("getreprovadoby")]
+        [CheckModel]
+        public IActionResult GetPlanoInpecaoReprovadoBy([FromServices] DAOFactory dao, [FromBody] DTOMedicao dto)
+        {
+            List<DTOPlanoInspecao> list = dao.InitPlanoInspecaoCabDAO().GetPlanoInspecaoCabReprovadoBy(dto.CT, dto.CodigoItem, dto.CodigoOperacao, dto.PlanoPadraoVersao, dto.PlanoPadrao, dto.DataInicio, dto.DataFim);
+
+            return list != null && list.Any() ? this.WriteSucess(list) : this.WriteErrorInfo(DEFAULT_ERROR_MESSAGE);
+        }
     }
 }
